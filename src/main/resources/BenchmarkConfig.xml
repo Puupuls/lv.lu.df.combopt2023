@@ -7,9 +7,9 @@
         <solver>
             <environmentMode>REPRODUCIBLE</environmentMode>
             <!-- Define the model -->
-            <solutionClass>lv.lu.df.combopt.domain.RoutingSolution</solutionClass>
-            <entityClass>lv.lu.df.combopt.domain.Vehicle</entityClass>
-            <entityClass>lv.lu.df.combopt.domain.Visit</entityClass>
+            <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
+            <entityClass>lv.lu.df.combopt.domain.Player</entityClass>
+            <entityClass>lv.lu.df.combopt.domain.Point</entityClass>
 
             <!-- Define the score function -->
             <scoreDirectorFactory>
@@ -24,7 +24,7 @@
             <constructionHeuristic />
         </solver>
        <problemBenchmarks>
-            <solutionFileIOClass>lv.lu.df.combopt.domain.RoutingSolutionJsonIO</solutionFileIOClass>
+            <solutionFileIOClass>lv.lu.df.combopt.domain.NavigationSolutionJsonIO</solutionFileIOClass>
             <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
             <inputSolutionFile>data/classExample5.json</inputSolutionFile>
             <!--<inputSolutionFile>data/example50.json</inputSolutionFile>

@@ -3,9 +3,9 @@
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
     <environmentMode>REPRODUCIBLE</environmentMode>
     <!-- Define the model -->
-    <solutionClass>lv.lu.df.combopt.domain.RoutingSolution</solutionClass>
-    <entityClass>lv.lu.df.combopt.domain.Vehicle</entityClass>
-    <entityClass>lv.lu.df.combopt.domain.Visit</entityClass>
+    <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
+    <entityClass>lv.lu.df.combopt.domain.Player</entityClass>
+    <entityClass>lv.lu.df.combopt.domain.Point</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>

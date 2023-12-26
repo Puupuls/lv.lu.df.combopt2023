@@ -2,8 +2,8 @@ package lv.lu.df.combopt;
 
 import ai.timefold.solver.benchmark.api.PlannerBenchmark;
 import ai.timefold.solver.benchmark.api.PlannerBenchmarkFactory;
-import lv.lu.df.combopt.domain.RoutingSolution;
-import lv.lu.df.combopt.domain.RoutingSolutionJsonIO;
+import lv.lu.df.combopt.domain.NavigationSolution;
+import lv.lu.df.combopt.domain.NavigationSolutionJsonIO;
 
 import java.io.File;
 
@@ -17,8 +17,8 @@ public class BenchmarkerRunner {
 
         //RoutingSolution problem = RoutingSolution.generateData();
 
-        RoutingSolutionJsonIO routingSolutionJsonIO = new RoutingSolutionJsonIO();
-        routingSolutionJsonIO.write(RoutingSolution.generateData(5),
+        NavigationSolutionJsonIO routingSolutionJsonIO = new NavigationSolutionJsonIO();
+        routingSolutionJsonIO.write(NavigationSolution.generateData(5),
                 new File("data/classExample5.json"));
 
         PlannerBenchmark benchmark = benchmarkFactoryFromXML.buildPlannerBenchmark();
