@@ -31,7 +31,7 @@ public class RoutingController {
 
     @PostMapping("/solve")
     public void solve(@RequestBody NavigationSolution problem) {
-        ghRouter.setDistanceTimeMap(problem.getLocationList());
+        ghRouter.setDistanceTimeMap(problem.getPointList());
         solverManager.solveAndListen(problem.getSolutionId(), id -> problem,
                 solution -> solutionMap.put(solution.getSolutionId(), solution));
     }
@@ -66,7 +66,7 @@ public class RoutingController {
     @PostConstruct
     public void init() {
         NavigationSolution problem50 = NavigationSolution.generateData(50);
-        ghRouter.setDistanceTimeMap(problem50.getLocationList());
+        ghRouter.setDistanceTimeMap(problem50.getPointList());
         //solutionIOJSON.write(problem50, new File("data/exampleRiga50.json"));
         solverManager.solveAndListen(problem50.getSolutionId(), id -> problem50, solution -> {
             solutionMap.put(solution.getSolutionId(), solution);});

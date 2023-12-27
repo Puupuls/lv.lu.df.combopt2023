@@ -4,7 +4,6 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.constraint.ConstraintMatch;
 import lombok.Getter;
 import lombok.Setter;
-import lv.lu.df.combopt.domain.Player;
 import lv.lu.df.combopt.domain.Point;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class SimpleIndictmentObject {
     private List<SimpleConstraintMatch> constraintMatches = new ArrayList<>();
 
     public SimpleIndictmentObject(Object indictedObject, HardSoftScore score, int matchCount, Set<ConstraintMatch<HardSoftScore>> constraintMatches) {
-        this.indictedObjectID = indictedObject instanceof Point ? ((Point) indictedObject).getName() : ((Player) indictedObject).getId();
+        this.indictedObjectID = ((Point) indictedObject).getName();
         this.score = score;
         this.matchCount = matchCount;
         this.constraintMatches = constraintMatches.stream().map(constraintMatch -> {

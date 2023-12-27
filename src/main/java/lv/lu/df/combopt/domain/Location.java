@@ -15,6 +15,8 @@ public class Location {
     private Double lon;
     private Double alt;
 
+    private String name;
+
     public Location(Double lat, Double lon, Double alt) {
         this.lat = lat;
         this.lon = lon;

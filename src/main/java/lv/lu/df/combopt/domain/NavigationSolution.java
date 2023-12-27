@@ -2,6 +2,7 @@ package lv.lu.df.combopt.domain;
 
 import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
+import ai.timefold.solver.core.api.domain.variable.PlanningListVariable;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Getter;
@@ -30,25 +31,59 @@ public class NavigationSolution {
     @PlanningScore
     private HardSoftScore score;
 
-    @PlanningEntityProperty
-    private Player player;
-
     // Minutes
     private Integer maxDuration;
 
     @ProblemFactCollectionProperty
     @ValueRangeProvider
     @JsonIdentityReference(alwaysAsId = false)
-    private List<Point> pointList = new ArrayList<>();
+    private List<Location> pointList = new ArrayList<>();
 
-    @ProblemFactCollectionProperty
-    private List<Location> locationList = new ArrayList<>();
+    @PlanningListVariable(valueRangeProviderRefs = {"pointList"})
+    @JsonIdentityReference(alwaysAsId = false)
+    private List<Location> visitedPoints = new ArrayList<>();
 
-    private Point start;
+    private Start start;
     private Point end;
 
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
+
+    private Integer distanceCost = 1;
+    private Integer altitudeCost = 5;
+    private Double speed = 5d; // km/h
+
+    private NavigationSolution problem;
+
+    public Integer getMinutesToTravel(double distance) {
+        return (int) Math.round(distance/1000 / speed * 60);
+    }
+    public Integer getTotalTimeMinutes(){
+        return this.getMinutesToTravel(this.getTotalDistance());
+    }
+
+    public Double getTotalDistance() {
+        Double dist = 0d;
+        if(this.visitedPoints.isEmpty()) return dist;
+        Location point = this.visitedPoints.get(0);
+        for (int i = 1; i < this.visitedPoints.size(); i++) {
+            dist += point.distanceTo(this.visitedPoints.get(i));
+            point = this.visitedPoints.get(i);
+        }
+        return dist;
+    }
+
+
+    public double getTotalAltitudeChange(){
+        double altChange = 0d;
+        if(this.visitedPoints.isEmpty()) return altChange;
+        Location point = this.visitedPoints.get(0);
+        for (int i = 1; i < this.visitedPoints.size(); i++) {
+            altChange += Math.abs(point.getAlt() - this.visitedPoints.get(i).getAlt());
+            point = this.visitedPoints.get(i);
+        }
+        return altChange;
+    }
 
     public static NavigationSolution generateData(int pointCount) {
         Random random = new Random();
@@ -56,55 +91,41 @@ public class NavigationSolution {
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
         problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
 
-        problem.player = new Player();
-        problem.player.setProblem(problem);
-        problem.player.setDistanceCost(1);
-        problem.player.setAltitudeCost(10);
-        problem.player.setSpeed(5d);
+        problem.setProblem(problem);
+        problem.setDistanceCost(1);
+        problem.setAltitudeCost(10);
+        problem.setSpeed(5d);
 
 
-        problem.start = new Point();
+        problem.start = new Start(
+                random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
+                random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
+                random.nextDouble() * 25
+        );
         problem.start.setName("Start");
         problem.start.setTimeToComplete(0);
-        problem.start.setLocation(
-                new Location(
-                        random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
-                        random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
-                        random.nextDouble() * 25
-                )
+//        problem.getPointList().add(problem.start);
+
+
+        problem.end = new Point(
+                random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
+                random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
+                random.nextDouble() * 25
         );
-        problem.getPointList().add(problem.start);
-        problem.getLocationList().add(problem.start.getLocation());
-
-
-        problem.end = new Point();
         problem.end.setName("End");
         problem.end.setTimeToComplete(0);
-        problem.end.setLocation(
-                new Location(
-                        random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
-                        random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
-                        random.nextDouble() * 25
-                )
-        );
         problem.getPointList().add(problem.end);
-        problem.getLocationList().add(problem.end.getLocation());
 
         for (int i = 1; i <= pointCount; i++) {
-            Point p = new Point();
-            p.setName("Point " + i);
-            p.setLocation(
-                    new Location(
-                            random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
-                            random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
-                            random.nextDouble() * 25
-                    )
+            Point p = new Point(
+                    random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
+                    random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
+                    random.nextDouble() * 25
             );
+            p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10) + 1);
             problem.getPointList().add(p);
-            problem.getLocationList().add(p.getLocation());
-
         }
 
         return problem;
@@ -113,14 +134,13 @@ public class NavigationSolution {
     public void print(){
         LOGGER.info("Solution: " + this.solutionId);
         LOGGER.info("Score: " + this.score);
-        LOGGER.info("Player: " + this.player.getId());
         LOGGER.info("Max duration: " + this.maxDuration);
-        LOGGER.info("Spent time: " + this.player.getTotalTimeMinutes());
-        LOGGER.info("Total distance: " + this.player.getTotalDistance());
-        LOGGER.info("Total altitude change: " + this.player.getTotalAltitudeChange());
+        LOGGER.info("Spent time: " + this.getTotalTimeMinutes());
+        LOGGER.info("Total distance: " + this.getTotalDistance());
+        LOGGER.info("Total altitude change: " + this.getTotalAltitudeChange());
 
         LOGGER.info("Route: ");
-        for(Point p : this.player.getPoints()){
+        for(Location p : this.visitedPoints){
             LOGGER.info("\t" + p.getName());
         }
     }

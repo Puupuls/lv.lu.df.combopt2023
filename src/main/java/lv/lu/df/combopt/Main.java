@@ -28,7 +28,7 @@ public class Main {
         SolverFactory<NavigationSolution> solverFactory = SolverFactory.create(
                 new SolverConfig()
                         .withSolutionClass(NavigationSolution.class)
-                        .withEntityClasses(Player.class, Point.class)
+                        .withEntityClasses(Point.class)
                         .withConstraintProviderClass(StreamCalculator.class)
                         .withTerminationConfig(new TerminationConfig().withSecondsSpentLimit(30L))
                         .withEnvironmentMode(EnvironmentMode.FULL_ASSERT)
