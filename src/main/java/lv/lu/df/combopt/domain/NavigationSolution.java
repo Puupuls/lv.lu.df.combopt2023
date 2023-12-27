@@ -2,6 +2,8 @@ package lv.lu.df.combopt.domain;
 
 import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
+import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -28,7 +31,7 @@ public class NavigationSolution {
     private String solutionId;
 
     @PlanningScore
-    private HardSoftScore score;
+    private HardMediumSoftScore score;
 
     @PlanningEntityProperty
     private Player player;
@@ -40,6 +43,7 @@ public class NavigationSolution {
     @ValueRangeProvider
     @JsonIdentityReference(alwaysAsId = false)
     private List<Point> pointList = new ArrayList<>();
+
 
     @ProblemFactCollectionProperty
     private List<Location> locationList = new ArrayList<>();
@@ -54,7 +58,7 @@ public class NavigationSolution {
         Random random = new Random();
         NavigationSolution problem = new NavigationSolution();
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
-        problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
+        problem.maxDuration = pointCount * 5; // 5 minūtes uz punktu
 
         problem.player = new Player();
         problem.player.setProblem(problem);
@@ -121,7 +125,7 @@ public class NavigationSolution {
 
         LOGGER.info("Route: ");
         for(Point p : this.player.getPoints()){
-            LOGGER.info("\t" + p.getName());
+            LOGGER.info("\t" + (p.getIsVisited()? "+" : "-") + " " + p.getName());
         }
     }
 }

@@ -1,6 +1,7 @@
 package lv.lu.df.combopt.rest;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.constraint.Indictment;
 import ai.timefold.solver.core.api.solver.SolutionManager;
@@ -23,7 +24,7 @@ public class RoutingController {
     @Autowired
     private SolverManager<NavigationSolution, String> solverManager;
     @Autowired
-    private SolutionManager<NavigationSolution, HardSoftScore> solutionManager;
+    private SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager;
 
     private Map<String, NavigationSolution> solutionMap = new HashMap<>();
 
@@ -46,7 +47,7 @@ public class RoutingController {
     }
 
     @GetMapping("/score")
-    public ScoreAnalysis<HardSoftScore> score(@RequestParam String id) {
+    public ScoreAnalysis<HardMediumSoftScore> score(@RequestParam String id) {
         return solutionManager.analyze(solutionMap.get(id));
     }
 
@@ -54,7 +55,7 @@ public class RoutingController {
     public List<SimpleIndictmentObject> indictments(@RequestParam String id) {
         return solutionManager.explain(solutionMap.getOrDefault(id, null)).getIndictmentMap().entrySet().stream()
                 .map(entry -> {
-                    Indictment<HardSoftScore> indictment = entry.getValue();
+                    Indictment<HardMediumSoftScore> indictment = entry.getValue();
                     return
                             new SimpleIndictmentObject(entry.getKey(), // indicted Object
                                     indictment.getScore(),

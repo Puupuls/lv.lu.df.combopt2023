@@ -1,5 +1,6 @@
 package lv.lu.df.combopt.solver;
 
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.stream.Constraint;
 import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
@@ -17,6 +18,7 @@ public class StreamCalculator implements ConstraintProvider {
                 startAtStart(constraintFactory),
                 endAtEnd(constraintFactory),
                 overspentTime(constraintFactory),
+                notVisitedPoints(constraintFactory),
                 altitudeChange(constraintFactory),
         };
     }
@@ -24,16 +26,26 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint startAtStart(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Player.class)
-                .filter(player -> player.getPoints().isEmpty() || player.getPoints().get(0) != player.getProblem().getStart())
-                .penalize(HardSoftScore.ONE_HARD, v -> 1)
+                .filter(player ->
+                        player.getPoints().isEmpty() ||
+                                player.getPoints().get(0) != player.getProblem().getStart() ||
+                                !player.getPoints().get(0).getIsVisited()
+                )
+                .penalize(HardMediumSoftScore.ONE_HARD, v -> 4)
                 .asConstraint("startAtStart");
     }
 
     public Constraint endAtEnd(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Player.class)
-                .filter(player -> player.getPoints().isEmpty() || player.getPoints().get(player.getPoints().size() - 1) != player.getProblem().getEnd())
-                .penalize(HardSoftScore.ONE_HARD, v -> 1)
+                .filter(player ->
+                        player.getPoints().isEmpty() ||
+                                !(
+                                        player.getPoints().get(player.getPoints().size() - 1) == player.getProblem().getEnd() ||
+                                                player.getPoints().get(player.getPoints().size() - 1).getPreviousVisited() == player.getProblem().getEnd()
+                                )
+                )
+                .penalize(HardMediumSoftScore.ONE_HARD, v -> 2)
                 .asConstraint("endAtEnd");
     }
 
@@ -41,14 +53,21 @@ public class StreamCalculator implements ConstraintProvider {
         return constraintFactory
                 .forEach(Player.class)
                 .filter(player -> player.getTotalTimeMinutes() > player.getProblem().getMaxDuration())
-                .penalize(HardSoftScore.ONE_HARD, v -> 1)
+                .penalize(HardMediumSoftScore.ONE_HARD, v -> v.getTotalTimeMinutes() - v.getProblem().getMaxDuration())
                 .asConstraint("overspentTime");
+    }
+
+    public Constraint notVisitedPoints(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(Player.class)
+                .penalize(HardMediumSoftScore.ONE_MEDIUM, v -> (int)v.getPoints().stream().filter(point -> !point.getIsVisited()).count())
+                .asConstraint("notVisitedPoints");
     }
 
     public Constraint altitudeChange(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Player.class)
-                .penalize(HardSoftScore.ONE_SOFT, v -> (int) v.getTotalAltitudeChange())
+                .penalize(HardMediumSoftScore.ONE_SOFT, v -> (int) v.getTotalAltitudeChange() * v.getAltitudeCost())
                 .asConstraint("altitudeChange");
     }
 }

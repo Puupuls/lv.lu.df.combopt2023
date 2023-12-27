@@ -2,19 +2,19 @@ package lv.lu.df.combopt;
 
 
 import ai.timefold.solver.core.api.score.ScoreExplanation;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
 import ai.timefold.solver.core.config.solver.EnvironmentMode;
 import ai.timefold.solver.core.config.solver.SolverConfig;
 import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
-import lv.lu.df.combopt.domain.*;
+import lv.lu.df.combopt.domain.NavigationSolution;
+import lv.lu.df.combopt.domain.Player;
+import lv.lu.df.combopt.domain.Point;
 import lv.lu.df.combopt.solver.StreamCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 
 public class Main {
@@ -35,10 +35,11 @@ public class Main {
         );
 
         Solver<NavigationSolution> solver = solverFactoryFromXML.buildSolver();
+
         NavigationSolution solution = solver.solve(problem);
 
-        SolutionManager<NavigationSolution, HardSoftScore> solutionManager = SolutionManager.create(solverFactory);
-        ScoreExplanation<NavigationSolution, HardSoftScore> scoreExplanation = solutionManager.explain(solution);
+        SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager = SolutionManager.create(solverFactory);
+        ScoreExplanation<NavigationSolution, HardMediumSoftScore> scoreExplanation = solutionManager.explain(solution);
         LOGGER.info(scoreExplanation.getSummary());
         solution.print();
     }

@@ -22,8 +22,21 @@ public class Point {
     private Integer value = 0;
     private Location location;
 
-    @PlanningVariable
-    private Boolean isVisited = false;
+    public Boolean getIsVisited() {
+        Boolean isAfterEnd = false;
+        Boolean isBeforeStart = this != this.getPlayer().getProblem().getStart();
+        Point p = this.getPrev();
+        while(p != null){
+            if(p == p.getPlayer().getProblem().getEnd()){
+                isAfterEnd = true;
+            }
+            if(p == p.getPlayer().getProblem().getStart()){
+                isBeforeStart = false;
+            }
+            p = p.getPrev();
+        }
+        return !isAfterEnd && !isBeforeStart;
+    }
 
     @NextElementShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
@@ -32,6 +45,27 @@ public class Point {
     @PreviousElementShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
     private Point prev;
+
+    public Point getPreviousVisited() {
+        Point point = this;
+        while (point.getPrev() != null && point.getPrev().getIsVisited()) {
+            point = point.getPrev();
+        }
+        if (point == this) {
+            return null;
+        }
+        return point;
+    }
+    public Point getNextVisited() {
+        Point point = this;
+        while (point.getNext() != null && point.getNext().getIsVisited()) {
+            point = point.getNext();
+        }
+        if (point == this) {
+            return null;
+        }
+        return point;
+    }
 
     @ShadowVariable(variableListenerClass = PreviousPointListener.class, sourceVariableName = "prev")
     private Double arrivalTime = null;
@@ -44,6 +78,6 @@ public class Point {
     public Double getDepartureTime() {
         return this.getArrivalTime() != null ?
                 this.getArrivalTime() + this.getTimeToComplete() :
-                null;
+                this.getTimeToComplete();
     }
 }

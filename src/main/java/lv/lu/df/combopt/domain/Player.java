@@ -22,7 +22,7 @@ import java.util.List;
 public class Player {
     private String id;
 
-    @PlanningListVariable
+    @PlanningListVariable()
     private List<Point> points = new ArrayList<>();
 
     private Integer distanceCost = 1;
@@ -39,9 +39,10 @@ public class Player {
         Double dist = 0d;
         if(this.points.isEmpty()) return dist;
         Point point = this.points.get(0);
-        for (int i = 1; i < this.points.size(); i++) {
-            dist += point.getLocation().distanceTo(this.points.get(i).getLocation());
-            point = this.points.get(i);
+        while(point != null) {
+            if(point.getNextVisited() == null) break;
+            dist += point.getLocation().distanceTo(point.getNextVisited().getLocation());
+            point = point.getNextVisited();
         }
         return dist;
     }
@@ -54,9 +55,10 @@ public class Player {
         double altChange = 0d;
         if(this.points.isEmpty()) return altChange;
         Point point = this.points.get(0);
-        for (int i = 1; i < this.points.size(); i++) {
-            altChange += Math.abs(point.getLocation().getAlt() - this.points.get(i).getLocation().getAlt());
-            point = this.points.get(i);
+        while(point != null) {
+            if(point.getNextVisited() == null) break;
+            altChange += Math.abs(point.getLocation().getAlt() - point.getNextVisited().getLocation().getAlt());
+            point = point.getNextVisited();
         }
         return altChange;
     }

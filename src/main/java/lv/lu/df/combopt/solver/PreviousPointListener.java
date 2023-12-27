@@ -13,11 +13,10 @@ public class PreviousPointListener implements VariableListener<NavigationSolutio
 
     @Override
     public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, Point point) {
-            Double arrival = point.getPrev() != null && point.getPrev().getDepartureTime() != null?
-                    point.getPrev().getDepartureTime() + point.getPlayer().getMinutesToTravel(
-                            point.getPrev().getLocation().distanceTo(point.getLocation())
+            Double arrival = point.getPreviousVisited() != null && point.getPreviousVisited().getDepartureTime() != null?
+                    point.getPreviousVisited().getDepartureTime() + point.getPlayer().getMinutesToTravel(
+                            point.getPreviousVisited().getLocation().distanceTo(point.getLocation())
                     ) : 0;
-
 
             Point shadowPoint = point;
             while (shadowPoint != null) {
@@ -25,12 +24,12 @@ public class PreviousPointListener implements VariableListener<NavigationSolutio
                 shadowPoint.setArrivalTime(arrival);
                 scoreDirector.afterVariableChanged(shadowPoint, "arrivalTime");
 
-                shadowPoint = shadowPoint.getNext();
+                shadowPoint = shadowPoint.getNextVisited();
 
                 if (shadowPoint != null) {
-                    arrival = shadowPoint.getPrev().getDepartureTime() +
+                    arrival = shadowPoint.getPreviousVisited().getDepartureTime() +
                             shadowPoint.getPlayer().getMinutesToTravel(
-                                shadowPoint.getPrev().getLocation().distanceTo(shadowPoint.getLocation())
+                                shadowPoint.getPreviousVisited().getLocation().distanceTo(shadowPoint.getLocation())
                             );
                 }
 
