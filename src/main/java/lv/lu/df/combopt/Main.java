@@ -21,7 +21,7 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
 
-        NavigationSolution problem = NavigationSolution.generateData(10);
+        NavigationSolution problem = NavigationSolution.generateData(100);
 
         SolverFactory<NavigationSolution> solverFactoryFromXML = SolverFactory.createFromXmlResource("SolverConfig.xml");
 
@@ -35,7 +35,6 @@ public class Main {
         );
 
         Solver<NavigationSolution> solver = solverFactoryFromXML.buildSolver();
-
         NavigationSolution solution = solver.solve(problem);
 
         SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager = SolutionManager.create(solverFactory);

@@ -67,17 +67,7 @@ public class Point {
         return point;
     }
 
-    @ShadowVariable(variableListenerClass = PreviousPointListener.class, sourceVariableName = "prev")
-    private Double arrivalTime = null;
-
     @InverseRelationShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
     private Player player;
-
-    @JsonIgnore
-    public Double getDepartureTime() {
-        return this.getArrivalTime() != null ?
-                this.getArrivalTime() + this.getTimeToComplete() :
-                this.getTimeToComplete();
-    }
 }

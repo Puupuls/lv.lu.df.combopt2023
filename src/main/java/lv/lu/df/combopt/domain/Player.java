@@ -48,7 +48,8 @@ public class Player {
     }
 
     public Integer getTotalTimeMinutes(){
-        return this.getMinutesToTravel(this.getTotalDistance());
+        Integer totalTaskDuration = this.points.stream().filter(Point::getIsVisited).mapToInt(Point::getTimeToComplete).sum();
+        return this.getMinutesToTravel(this.getTotalDistance()) + totalTaskDuration;
     }
 
     public double getTotalAltitudeChange(){
