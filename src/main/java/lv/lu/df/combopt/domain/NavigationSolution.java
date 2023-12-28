@@ -61,6 +61,7 @@ public class NavigationSolution {
         problem.maxDuration = pointCount * 5; // 5 minūtes uz punktu
 
         problem.player = new Player();
+        problem.player.setId("Player 1");
         problem.player.setProblem(problem);
         problem.player.setDistanceCost(1);
         problem.player.setAltitudeCost(10);

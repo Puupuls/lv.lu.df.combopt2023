@@ -38,14 +38,8 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint endAtEnd(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Player.class)
-                .filter(player ->
-                        player.getPoints().isEmpty() ||
-                                !(
-                                        player.getPoints().get(player.getPoints().size() - 1) == player.getProblem().getEnd() ||
-                                                player.getPoints().get(player.getPoints().size() - 1).getPreviousVisited() == player.getProblem().getEnd()
-                                )
-                )
-                .penalize(HardMediumSoftScore.ONE_HARD, v -> 2)
+                .filter(p -> p.getPoints().isEmpty() || !(p.getPoints().get(p.getPoints().size()-1) != p.getProblem().getEnd() || p.getPoints().get(p.getPoints().size()-1).getPreviousVisited() != p.getProblem().getEnd()))
+                .penalize(HardMediumSoftScore.ONE_HARD, (p) -> 2)
                 .asConstraint("endAtEnd");
     }
 
@@ -59,8 +53,9 @@ public class StreamCalculator implements ConstraintProvider {
 
     public Constraint notVisitedPoints(ConstraintFactory constraintFactory) {
         return constraintFactory
-                .forEach(Player.class)
-                .penalize(HardMediumSoftScore.ONE_MEDIUM, v -> (int)v.getPoints().stream().filter(point -> !point.getIsVisited()).count())
+                .forEach(Point.class)
+                .filter(point -> !point.getIsVisited())
+                .penalize(HardMediumSoftScore.ONE_MEDIUM)
                 .asConstraint("notVisitedPoints");
     }
 

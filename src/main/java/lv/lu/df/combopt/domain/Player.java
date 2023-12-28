@@ -63,4 +63,9 @@ public class Player {
         }
         return altChange;
     }
+
+    @Override
+    public String toString() {
+        return "Player({"+this.id+"})";
+    }
 }

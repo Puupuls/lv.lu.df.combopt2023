@@ -23,6 +23,9 @@ public class Point {
     private Location location;
 
     public Boolean getIsVisited() {
+        if (this.getPlayer() == null) {
+            return false;
+        }
         Boolean isAfterEnd = false;
         Boolean isBeforeStart = this != this.getPlayer().getProblem().getStart();
         Point p = this.getPrev();
@@ -35,7 +38,7 @@ public class Point {
             }
             p = p.getPrev();
         }
-        return !isAfterEnd && !isBeforeStart;
+        return (!isAfterEnd && !isBeforeStart) || (this == this.getPlayer().getProblem().getEnd() || this == this.getPlayer().getProblem().getStart());
     }
 
     @NextElementShadowVariable(sourceVariableName = "points")
@@ -70,4 +73,9 @@ public class Point {
     @InverseRelationShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
     private Player player;
+
+    @Override
+    public String toString() {
+        return "Point({"+this.name+"})";
+    }
 }
