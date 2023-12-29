@@ -54,7 +54,7 @@ public class NavigationSolution {
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
 
-    public static NavigationSolution generateData(int pointCount) {
+    public static NavigationSolution generateData(Integer pointCount) {
         Random random = new Random();
         NavigationSolution problem = new NavigationSolution();
         problem.setSolutionId(NavigationSolution.getProblemId().toString());

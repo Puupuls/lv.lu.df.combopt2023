@@ -2,6 +2,7 @@
 <solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
     <environmentMode>REPRODUCIBLE</environmentMode>
+
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
     <entityClass>lv.lu.df.combopt.domain.Player</entityClass>
@@ -14,7 +15,7 @@
 
     <!-- Configure the optimization algorithms (optional) -->
     <termination>
-        <secondsSpentLimit>10</secondsSpentLimit>
+        <secondsSpentLimit>30</secondsSpentLimit>
     </termination>
 
     <constructionHeuristic />

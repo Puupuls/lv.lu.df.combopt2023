@@ -22,25 +22,6 @@ public class Point {
     private Integer value = 0;
     private Location location;
 
-    public Boolean getIsVisited() {
-        if (this.getPlayer() == null) {
-            return false;
-        }
-        Boolean isAfterEnd = false;
-        Boolean isBeforeStart = this != this.getPlayer().getProblem().getStart();
-        Point p = this.getPrev();
-        while(p != null){
-            if(p == p.getPlayer().getProblem().getEnd()){
-                isAfterEnd = true;
-            }
-            if(p == p.getPlayer().getProblem().getStart()){
-                isBeforeStart = false;
-            }
-            p = p.getPrev();
-        }
-        return (!isAfterEnd && !isBeforeStart) || (this == this.getPlayer().getProblem().getEnd() || this == this.getPlayer().getProblem().getStart());
-    }
-
     @NextElementShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
     private Point next;
@@ -48,6 +29,9 @@ public class Point {
     @PreviousElementShadowVariable(sourceVariableName = "points")
     @JsonIdentityReference(alwaysAsId = true)
     private Point prev;
+
+    @ShadowVariable(variableListenerClass = PreviousPointListener.class, sourceVariableName = "prev")
+    private Boolean isVisited = false;
 
     public Point getPreviousVisited() {
         Point point = this;

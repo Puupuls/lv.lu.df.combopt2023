@@ -35,10 +35,10 @@ public class Player {
         return (int) Math.round(distance/1000 / speed * 60);
     }
 
-    public Double getTotalDistance() {
-        Double dist = 0d;
+    public double getTotalDistance() {
+        double dist = 0d;
         if(this.points.isEmpty()) return dist;
-        Point point = this.points.get(0);
+        Point point = this.getFirstVisitedPoint();
         while(point != null) {
             if(point.getNextVisited() == null) break;
             dist += point.getLocation().distanceTo(point.getNextVisited().getLocation());
@@ -55,13 +55,31 @@ public class Player {
     public double getTotalAltitudeChange(){
         double altChange = 0d;
         if(this.points.isEmpty()) return altChange;
-        Point point = this.points.get(0);
+        Point point = this.getFirstVisitedPoint();
         while(point != null) {
             if(point.getNextVisited() == null) break;
             altChange += Math.abs(point.getLocation().getAlt() - point.getNextVisited().getLocation().getAlt());
             point = point.getNextVisited();
         }
         return altChange;
+    }
+
+    public Point getLastVisitedPoint() {
+        if(this.points.isEmpty()) return null;
+        Point point = this.points.get(this.points.size() - 1);
+        while(point != null && !point.getIsVisited()) {
+            point = point.getPrev();
+        }
+        return point;
+    }
+
+    public Point getFirstVisitedPoint() {
+        if(this.points.isEmpty()) return null;
+        Point point = this.points.get(0);
+        while(point != null && !point.getIsVisited()) {
+            point = point.getNext();
+        }
+        return point;
     }
 
     @Override

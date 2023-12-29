@@ -23,20 +23,17 @@ public class Main {
 
         NavigationSolution problem = NavigationSolution.generateData(100);
 
-        SolverFactory<NavigationSolution> solverFactoryFromXML = SolverFactory.createFromXmlResource("SolverConfig.xml");
+        SolverFactory<NavigationSolution> solverFactory = SolverFactory.createFromXmlResource("SolverConfig.xml");
 
-        SolverFactory<NavigationSolution> solverFactory = SolverFactory.create(
-                new SolverConfig()
-                        .withSolutionClass(NavigationSolution.class)
-                        .withEntityClasses(Player.class, Point.class)
-                        .withConstraintProviderClass(StreamCalculator.class)
-                        .withTerminationConfig(new TerminationConfig().withSecondsSpentLimit(30L))
-                        .withEnvironmentMode(EnvironmentMode.FULL_ASSERT)
-        );
+        Solver<NavigationSolution> solver = solverFactory.buildSolver();
+        solver.addEventListener(event -> {
+            if(event.isEveryProblemChangeProcessed()) {
+                LOGGER.info("New best solution found: {} at {}ms", event.getNewBestScore(), event.getTimeMillisSpent());
+            }
+        });
 
-        Solver<NavigationSolution> solver = solverFactoryFromXML.buildSolver();
         NavigationSolution solution = solver.solve(problem);
-
+        LOGGER.info("Best solution found: {}", solution.getScore());
         SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager = SolutionManager.create(solverFactory);
         ScoreExplanation<NavigationSolution, HardMediumSoftScore> scoreExplanation = solutionManager.explain(solution);
         LOGGER.info(scoreExplanation.getSummary());

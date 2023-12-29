@@ -13,7 +13,44 @@ public class PreviousPointListener implements VariableListener<NavigationSolutio
 
     @Override
     public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, Point point) {
+        Point shadowPoint = point;
+        while(shadowPoint != null) {
+            if (shadowPoint.getPlayer() != null) {
+                Boolean isAfterStart = false;
 
+                if (shadowPoint == shadowPoint.getPlayer().getProblem().getStart()) {
+                    isAfterStart = true;
+                } else if (shadowPoint.getPrev() != null) {
+                    if (shadowPoint.getPrev().getIsVisited()) {
+                        isAfterStart = true;
+                    }
+                }
+
+                Boolean isBeforeEnd = false;
+                if (shadowPoint == shadowPoint.getPlayer().getProblem().getEnd()) {
+                    isBeforeEnd = true;
+                } else if (shadowPoint.getNext() != null) {
+                    Point temp = shadowPoint.getNext();
+                    while (temp != null) {
+                        if (temp == shadowPoint.getPlayer().getProblem().getEnd()) {
+                            isBeforeEnd = true;
+                            break;
+                        }
+                        temp = temp.getNext();
+                    }
+                }
+
+                scoreDirector.beforeVariableChanged(shadowPoint, "isVisited");
+                shadowPoint.setIsVisited(isAfterStart && isBeforeEnd);
+                scoreDirector.afterVariableChanged(shadowPoint, "isVisited");
+
+            } else {
+                scoreDirector.beforeVariableChanged(shadowPoint, "isVisited");
+                shadowPoint.setIsVisited(false);
+                scoreDirector.afterVariableChanged(shadowPoint, "isVisited");
+            }
+            shadowPoint = shadowPoint.getNext();
+        }
     }
 
     @Override

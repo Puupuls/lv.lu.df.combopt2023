@@ -26,7 +26,7 @@ public class Location {
     @JsonIgnore
     private Map<Location, Integer> timeMap = new HashMap<>();
 
-    public Double distanceTo(Location location) {
+    public double distanceTo(Location location) {
         Double distance = this.distanceMap.get(location);
         if (distance == null) {
             distance = this.simpleDistanceTo(location);
@@ -35,7 +35,7 @@ public class Location {
         return distance;
     }
 
-    public Double simpleDistanceTo(Location location) {
+    private double simpleDistanceTo(Location location) {
         return distance(
                 this.getLat(),
                 location.getLat(),
@@ -74,5 +74,14 @@ public class Location {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "lat=" + lat +
+                ", lon=" + lon +
+                ", alt=" + alt +
+                '}';
     }
 }

@@ -16,14 +16,15 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 startAtStart(constraintFactory),
-                endAtEnd(constraintFactory),
                 overspentTime(constraintFactory),
                 notVisitedPoints(constraintFactory),
                 altitudeChange(constraintFactory),
+                distanceChange(constraintFactory)
         };
     }
 
     public Constraint startAtStart(ConstraintFactory constraintFactory) {
+        // Tīri organizatorisks constraint, kas novieto sākuma punktu masīva pirmajā pozīcijā
         return constraintFactory
                 .forEach(Player.class)
                 .filter(player ->
@@ -31,16 +32,8 @@ public class StreamCalculator implements ConstraintProvider {
                                 player.getPoints().get(0) != player.getProblem().getStart() ||
                                 !player.getPoints().get(0).getIsVisited()
                 )
-                .penalize(HardMediumSoftScore.ONE_HARD, v -> 4)
+                .penalize(HardMediumSoftScore.ONE_HARD, player -> player.getPoints().contains(player.getProblem().getStart())? player.getPoints().indexOf(player.getProblem().getStart()) : 1)
                 .asConstraint("startAtStart");
-    }
-
-    public Constraint endAtEnd(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEach(Player.class)
-                .filter(p -> p.getPoints().isEmpty() || !(p.getPoints().get(p.getPoints().size()-1) != p.getProblem().getEnd() || p.getPoints().get(p.getPoints().size()-1).getPreviousVisited() != p.getProblem().getEnd()))
-                .penalize(HardMediumSoftScore.ONE_HARD, (p) -> 2)
-                .asConstraint("endAtEnd");
     }
 
     public Constraint overspentTime(ConstraintFactory constraintFactory) {
@@ -62,7 +55,14 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint altitudeChange(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(Player.class)
-                .penalize(HardMediumSoftScore.ONE_SOFT, v -> (int) v.getTotalAltitudeChange() * v.getAltitudeCost())
+                .penalize(HardMediumSoftScore.ONE_SOFT, p -> (int) p.getTotalAltitudeChange() * p.getAltitudeCost())
                 .asConstraint("altitudeChange");
+    }
+
+    public Constraint distanceChange(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(Player.class)
+                .penalize(HardMediumSoftScore.ONE_SOFT, p -> (int) Math.round(p.getTotalDistance() * p.getDistanceCost()))
+                .asConstraint("totalDistance");
     }
 }
