@@ -26,13 +26,14 @@ public class Player {
     private List<Point> points = new ArrayList<>();
 
     private Integer distanceCost = 1;
+    private Integer timeCost = 1;
     private Integer altitudeCost = 5;
     private Double speed = 5d; // km/h
 
     private NavigationSolution problem;
 
-    public Integer getMinutesToTravel(double distance) {
-        return (int) Math.round(distance/1000 / speed * 60);
+    public Integer getTimeToTravel(double distance) {
+        return (int) Math.round(distance / 1000 / speed * 60 * 60);
     }
 
     public double getTotalDistance() {
@@ -41,15 +42,15 @@ public class Player {
         Point point = this.getFirstVisitedPoint();
         while(point != null) {
             if(point.getNextVisited() == null) break;
-            dist += point.getLocation().distanceTo(point.getNextVisited().getLocation());
+            dist += point.distanceTo(point.getNextVisited());
             point = point.getNextVisited();
         }
         return dist;
     }
 
-    public Integer getTotalTimeMinutes(){
+    public Integer getTotalTime(){
         Integer totalTaskDuration = this.points.stream().filter(Point::getIsVisited).mapToInt(Point::getTimeToComplete).sum();
-        return this.getMinutesToTravel(this.getTotalDistance()) + totalTaskDuration;
+        return this.getTimeToTravel(this.getTotalDistance()) + totalTaskDuration;
     }
 
     public double getTotalAltitudeChange(){
@@ -58,7 +59,7 @@ public class Player {
         Point point = this.getFirstVisitedPoint();
         while(point != null) {
             if(point.getNextVisited() == null) break;
-            altChange += Math.abs(point.getLocation().getAlt() - point.getNextVisited().getLocation().getAlt());
+            altChange += Math.abs(point.getAlt() - point.getNextVisited().getAlt());
             point = point.getNextVisited();
         }
         return altChange;
@@ -80,6 +81,18 @@ public class Player {
             point = point.getNext();
         }
         return point;
+    }
+
+    public Integer getVisitedPointsCount() {
+        return (int) this.points.stream().filter(Point::getIsVisited).count();
+    }
+
+    public Integer getCollectedPointValue() {
+        return this.points.stream().filter(Point::getIsVisited).mapToInt(Point::getValue).sum();
+    }
+
+    public Integer getTotalPointValue() {
+        return this.points.stream().mapToInt(Point::getValue).sum();
     }
 
     @Override

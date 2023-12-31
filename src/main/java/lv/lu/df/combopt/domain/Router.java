@@ -22,18 +22,25 @@ public class Router {
     public Router(String osmFile, String ghLocation) {
         router = new GraphHopper();
         router.setOSMFile(osmFile);
+        router.setElevation(true);
         router.setGraphHopperLocation(ghLocation);
         router.setProfiles(new Profile("car").setVehicle("car").setWeighting("shortest").setTurnCosts(false));
+//        router.setProfiles(new Profile("foot").setVehicle("foot").setWeighting("shortest").setTurnCosts(false));
         router.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
         router.importOrLoad();
     }
 
-    public void setDistanceTimeMap(List<Location> locationList) {
-        for (Location location: locationList) {
-            for (Location toLocation: locationList) {
-                GHRequest req = new GHRequest(location.getLat(), location.getLon(), toLocation.getLat(), toLocation.getLon()).
-                                setProfile("car").
-                                setLocale(Locale.US);
+    public void setDistanceTimeMap(List<Point> locationList) {
+        for (Point location: locationList) {
+            for (Point toLocation: locationList) {
+                GHRequest req = new GHRequest(
+                        location.getLat(),
+                        location.getLon(),
+                        toLocation.getLat(),
+                        toLocation.getLon()
+                ).
+                        setProfile("car").
+                        setLocale(Locale.ENGLISH);
                 GHResponse rsp = router.route(req);
                 if (rsp.hasErrors())
                     throw new RuntimeException(rsp.getErrors().toString());

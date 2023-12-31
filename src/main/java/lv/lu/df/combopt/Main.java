@@ -6,13 +6,7 @@ import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftSc
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.Solver;
 import ai.timefold.solver.core.api.solver.SolverFactory;
-import ai.timefold.solver.core.config.solver.EnvironmentMode;
-import ai.timefold.solver.core.config.solver.SolverConfig;
-import ai.timefold.solver.core.config.solver.termination.TerminationConfig;
 import lv.lu.df.combopt.domain.NavigationSolution;
-import lv.lu.df.combopt.domain.Player;
-import lv.lu.df.combopt.domain.Point;
-import lv.lu.df.combopt.solver.StreamCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +22,7 @@ public class Main {
         Solver<NavigationSolution> solver = solverFactory.buildSolver();
         solver.addEventListener(event -> {
             if(event.isEveryProblemChangeProcessed()) {
-                LOGGER.info("New best solution found: {} at {}ms", event.getNewBestScore(), event.getTimeMillisSpent());
+                LOGGER.info("New best solution found at {}ms\n{}", event.getTimeMillisSpent(), event.getNewBestSolution());
             }
         });
 
