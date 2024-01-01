@@ -24,7 +24,7 @@ $(document).ready(function () {
 
     $.getJSON("/routes/score?id=" + solutionId, function(analysis) {
         g_analysis = analysis;
-        var badge = "badge " + getClassFromScore(analysis.score);
+        let badge = "badge " + getClassFromScore(analysis.score);
         $("#score_text").text(analysis.score);
         $("#score_text").attr({"class":badge});
     });
@@ -33,7 +33,8 @@ $(document).ready(function () {
         g_solution = solution;
         let stats = $('#core_stats');
         stats.append($('<div class=""><b>Time limit:</b> ' + formatTime(solution.maxDuration) + '</div>'));
-        stats.append($('<div class=""><b>Time spent:</b> ' + formatTime(solution.player.totalTime) + ' (Cost per second: ' + solution.player.timeCost + 'soft)</div>'));
+        stats.append($('<div class=""><b>Total time spent:</b> ' + formatTime(solution.player.totalTime) + ' (Cost per second: ' + solution.player.timeCost + 'soft)</div>'));
+        stats.append($('<div class=""><b>Time spent on tasks:</b> ' + formatTime(solution.player.timeSpentOnTasks) + '</div>'));
         stats.append($('<div class=""><b>Speed:</b> ' + solution.player.speed + '</div>'));
         stats.append($('<div class=""><b>Total distance:</b> ' + Math.round(solution.player.totalDistance * 100) / 100 + 'm (Cost per meter: ' + solution.player.distanceCost + 'soft)</div>'));
         stats.append($('<div class=""><b>Total altitude change:</b> ' + Math.round(solution.player.totalAltitudeChange * 100) / 100 + ' (Cost per meter: ' + solution.player.altitudeCost + 'soft)</div>'));
@@ -51,16 +52,31 @@ $(document).ready(function () {
             })
 
             let playerIndictments = indictmentMap[solution.player.id];
-            let p = $('<li class="' + getClassFromScore(playerIndictments.score) + '"><b>Player</b></li>')
-            let ul = $('<ul></ul>')
-            p.append(ul);
-            j_indictments.append(p);
             if(playerIndictments != null) {
+                let p = $('<li class="' + getClassFromScore(playerIndictments.score) + '"><b>Player</b></li>')
+                let ul = $('<ul></ul>')
+                p.append(ul);
+                j_indictments.append(p);
                 playerIndictments.constraintMatches.forEach((i) => {
                     ul.append($('<li><b>' + i.constraintName + ':</b> ' + i.score + '</li>'));
                 })
             }
-
+            let pointMap = {};
+            solution.pointList.forEach((point) => {
+                pointMap[point.name] = point;
+            })
+            for(let point of solution.player.points){
+                let pointIndictment = indictmentMap[point];
+                if(pointIndictment){
+                    let p = $(`<li class="${getClassFromScore(pointIndictment.score)}"><b>${point}</b> - Dist to next visited: ${pointMap[point].distanceToNextVisited}</li>`)
+                    let ul = $('<ul></ul>')
+                    p.append(ul);
+                    j_indictments.append(p);
+                    pointIndictment.constraintMatches.forEach((i) => {
+                        ul.append($('<li><b>' + i.constraintName + ':</b> ' + i.score + '</li>'));
+                    })
+                }
+            }
         })
     });
 

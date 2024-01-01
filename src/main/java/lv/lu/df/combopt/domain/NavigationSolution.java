@@ -23,10 +23,10 @@ public class NavigationSolution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NavigationSolution.class);
 
-    private static final Double UPPER_LEFT_COORD_LAT = 56.9965;
-    private static final Double UPPER_LEFT_COORD_LON = 24.0309;
-    private static final Double LOWER_RIGHT_COORD_LAT = 56.8884;
-    private static final Double LOWER_RIGHT_COORD_LON = 24.2520;
+    private static final Double UPPER_LEFT_COORD_LAT = 56.95;
+    private static final Double UPPER_LEFT_COORD_LON = 24.10;
+    private static final Double LOWER_RIGHT_COORD_LAT = 56.90;
+    private static final Double LOWER_RIGHT_COORD_LON = 24.20;
 
     private String solutionId;
     private String name = "";
@@ -34,16 +34,16 @@ public class NavigationSolution {
     @PlanningScore
     private HardMediumSoftScore score;
 
+    @ProblemFactCollectionProperty
+    @ValueRangeProvider
+    @JsonIdentityReference(alwaysAsId = false)
+    private List<Point> pointList = new ArrayList<>();
+
     @PlanningEntityProperty
     private Player player;
 
     // Minutes
     private Integer maxDuration;
-
-    @ProblemFactCollectionProperty
-    @ValueRangeProvider
-    @JsonIdentityReference(alwaysAsId = false)
-    private List<Point> pointList = new ArrayList<>();
 
     private Point start;
     private Point end;
@@ -55,7 +55,7 @@ public class NavigationSolution {
         Random random = new Random();
         NavigationSolution problem = new NavigationSolution();
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
-        problem.maxDuration = 60 * 60; // 5 minūtes uz punktu
+        problem.maxDuration = (int) Math.round(60 * 60 * 5);
 
         problem.player = new Player();
         problem.player.setId("Player 1");
@@ -88,7 +88,7 @@ public class NavigationSolution {
             p.setLat(random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + LOWER_RIGHT_COORD_LAT);
             p.setLon(random.nextDouble() * (LOWER_RIGHT_COORD_LON - UPPER_LEFT_COORD_LON) + UPPER_LEFT_COORD_LON);
             p.setAlt(random.nextDouble() * 25);
-            p.setTimeToComplete(random.nextInt(5 * 60) + 30);
+            p.setTimeToComplete(random.nextInt(75) + 15);
             p.setValue(random.nextInt(10) + 1);
             problem.getPointList().add(p);
         }

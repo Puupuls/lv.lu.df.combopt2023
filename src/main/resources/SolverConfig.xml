@@ -15,18 +15,23 @@
 
     <!-- Configure the optimization algorithms (optional) -->
     <termination>
-        <secondsSpentLimit>30</secondsSpentLimit>
+        <secondsSpentLimit>60</secondsSpentLimit>
     </termination>
 
     <constructionHeuristic />
 
     <localSearch>
-        <subListChangeMoveSelector />
+        <unionMoveSelector>
+            <listSwapMoveSelector/>
+            <listChangeMoveSelector/>
+            <subListChangeMoveSelector/>
+            <subListSwapMoveSelector/>
+        </unionMoveSelector>
         <acceptor>
-            <valueTabuSize>2</valueTabuSize>
+            <entityTabuRatio>0.1</entityTabuRatio>
         </acceptor>
         <forager>
-            <acceptedCountLimit>1000</acceptedCountLimit>
+            <acceptedCountLimit>2000</acceptedCountLimit>
         </forager>
     </localSearch>
 </solver>

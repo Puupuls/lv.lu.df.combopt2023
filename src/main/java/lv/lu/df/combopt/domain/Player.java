@@ -23,6 +23,7 @@ public class Player {
     private String id;
 
     @PlanningListVariable()
+    @JsonIdentityReference(alwaysAsId = true)
     private List<Point> points = new ArrayList<>();
 
     private Integer distanceCost = 1;
@@ -33,7 +34,11 @@ public class Player {
     private NavigationSolution problem;
 
     public Integer getTimeToTravel(double distance) {
-        return (int) Math.round(distance / 1000 / speed * 60 * 60);
+        double distanceKm = distance / 1000;
+        double hours = distanceKm / speed;
+        double minutes = hours * 60;
+        double seconds = minutes * 60;
+        return (int) Math.round(seconds);
     }
 
     public double getTotalDistance() {
@@ -48,9 +53,11 @@ public class Player {
         return dist;
     }
 
+    public Integer getTimeSpentOnTasks(){
+        return this.points.stream().filter(Point::getIsVisited).mapToInt(Point::getTimeToComplete).sum();
+    }
     public Integer getTotalTime(){
-        Integer totalTaskDuration = this.points.stream().filter(Point::getIsVisited).mapToInt(Point::getTimeToComplete).sum();
-        return this.getTimeToTravel(this.getTotalDistance()) + totalTaskDuration;
+        return this.getTimeToTravel(this.getTotalDistance()) + this.getTimeSpentOnTasks();
     }
 
     public double getTotalAltitudeChange(){

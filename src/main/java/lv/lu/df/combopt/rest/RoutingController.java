@@ -2,7 +2,6 @@ package lv.lu.df.combopt.rest;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.score.constraint.Indictment;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
@@ -69,8 +68,7 @@ public class RoutingController {
         NavigationSolution problem50 = NavigationSolution.generateData(50);
         ghRouter.setDistanceTimeMap(problem50.getPointList());
         //solutionIOJSON.write(problem50, new File("data/exampleRiga50.json"));
-        solverManager.solveAndListen(problem50.getSolutionId(), id -> problem50, solution -> {
-            solutionMap.put(solution.getSolutionId(), solution);});
+        solverManager.solveAndListen(problem50.getSolutionId(), id -> problem50, solution -> {solutionMap.put(solution.getSolutionId(), solution);});
     }
 
 }

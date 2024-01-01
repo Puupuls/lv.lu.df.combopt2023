@@ -43,25 +43,27 @@ public class Point {
     @ShadowVariable(variableListenerClass = PreviousPointListener.class, sourceVariableName = "prev")
     private Boolean isVisited = false;
 
+    @JsonIdentityReference(alwaysAsId = true)
     public Point getPreviousVisited() {
         Point point = this;
-        while (point.getPrev() != null && point.getPrev().getIsVisited()) {
-            point = point.getPrev();
-        }
-        if (point == this) {
-            return null;
-        }
-        return point;
+        if(point.getPrev() == null) return null;
+        if(point.getPrev().getIsVisited()) return point.getPrev();
+        return null;
     }
+    @JsonIdentityReference(alwaysAsId = true)
     public Point getNextVisited() {
         Point point = this;
-        while (point.getNext() != null && point.getNext().getIsVisited()) {
-            point = point.getNext();
+        if(point.getNext() == null) return null;
+        if(point.getNext().getIsVisited()) return point.getNext();
+        return null;
+    }
+
+    public double getDistanceToNextVisited() {
+        Point next = this.getNextVisited();
+        if (next == null) {
+            return 0d;
         }
-        if (point == this) {
-            return null;
-        }
-        return point;
+        return this.distanceTo(next);
     }
 
     public double distanceTo(Point p2) {
