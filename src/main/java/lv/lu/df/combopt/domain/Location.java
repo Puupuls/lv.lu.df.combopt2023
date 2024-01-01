@@ -1,10 +1,13 @@
 package lv.lu.df.combopt.domain;
 
+import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
+import ai.timefold.solver.core.impl.domain.variable.nextprev.PreviousElementVariableListener;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lv.lu.df.combopt.solver.PrevElemChangeListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,16 +20,30 @@ public class Location {
 
     private String name;
 
+    private NavigationSolution navigationSolution;
+
     public Location(Double lat, Double lon, Double alt) {
         this.lat = lat;
         this.lon = lon;
         this.alt = alt;
     }
 
+    @ShadowVariable(sourceVariableName = "prev", variableListenerClass = PrevElemChangeListener.class)
+    private Location next;
+
     @JsonIgnore
     private Map<Location, Double> distanceMap = new HashMap<>();
     @JsonIgnore
     private Map<Location, Integer> timeMap = new HashMap<>();
+
+    public Integer timeTo(Location location) {
+        Integer time = this.timeMap.get(location);
+        if (time == null) {
+            time = (int) (this.distanceTo(location) / 1000 / this.navigationSolution.getSpeed() * 3600);
+            this.timeMap.put(location, time);
+        }
+        return time;
+    }
 
     public Double distanceTo(Location location) {
         Double distance = this.distanceMap.get(location);

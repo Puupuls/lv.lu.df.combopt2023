@@ -2,8 +2,7 @@ package lv.lu.df.combopt.domain;
 
 import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
-import ai.timefold.solver.core.api.domain.variable.PlanningListVariable;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,22 +28,18 @@ public class NavigationSolution {
     private String solutionId;
 
     @PlanningScore
-    private HardSoftScore score;
+    private HardMediumSoftScore score;
 
     // Minutes
     private Integer maxDuration;
 
-    @ProblemFactCollectionProperty
+    @PlanningEntityCollectionProperty
     @ValueRangeProvider
     @JsonIdentityReference(alwaysAsId = false)
     private List<Location> pointList = new ArrayList<>();
 
-    @PlanningListVariable(valueRangeProviderRefs = {"pointList"})
-    @JsonIdentityReference(alwaysAsId = false)
-    private List<Location> visitedPoints = new ArrayList<>();
-
     private Start start;
-    private Point end;
+    private TaskLocation end;
 
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
@@ -64,25 +59,13 @@ public class NavigationSolution {
 
     public Double getTotalDistance() {
         Double dist = 0d;
-        if(this.visitedPoints.isEmpty()) return dist;
-        Location point = this.visitedPoints.get(0);
-        for (int i = 1; i < this.visitedPoints.size(); i++) {
-            dist += point.distanceTo(this.visitedPoints.get(i));
-            point = this.visitedPoints.get(i);
+        Location p = this.start;
+        while(p != null){
+            if (p.getNext() == null) break;
+            dist += p.distanceTo(p.getNext());
+            p = p.getNext();
         }
         return dist;
-    }
-
-
-    public double getTotalAltitudeChange(){
-        double altChange = 0d;
-        if(this.visitedPoints.isEmpty()) return altChange;
-        Location point = this.visitedPoints.get(0);
-        for (int i = 1; i < this.visitedPoints.size(); i++) {
-            altChange += Math.abs(point.getAlt() - this.visitedPoints.get(i).getAlt());
-            point = this.visitedPoints.get(i);
-        }
-        return altChange;
     }
 
     public static NavigationSolution generateData(int pointCount) {
@@ -104,10 +87,10 @@ public class NavigationSolution {
         );
         problem.start.setName("Start");
         problem.start.setTimeToComplete(0);
-//        problem.getPointList().add(problem.start);
+        problem.start.setNavigationSolution(problem);
 
 
-        problem.end = new Point(
+        problem.end = new End(
                 random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
                 random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
                 random.nextDouble() * 25
@@ -115,9 +98,11 @@ public class NavigationSolution {
         problem.end.setName("End");
         problem.end.setTimeToComplete(0);
         problem.getPointList().add(problem.end);
+        problem.end.setNavigationSolution(problem);
 
+        Location t = problem.start;
         for (int i = 1; i <= pointCount; i++) {
-            Point p = new Point(
+            TaskLocation p = new TaskLocation(
                     random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
                     random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
                     random.nextDouble() * 25
@@ -125,8 +110,14 @@ public class NavigationSolution {
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10) + 1);
+            p.setPrev(t);
+//            t.setNext(p);
+//            t = p;
+            p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
+        problem.end.setPrev(t);
+//        t.setNext(problem.end);
 
         return problem;
     }
@@ -137,11 +128,12 @@ public class NavigationSolution {
         LOGGER.info("Max duration: " + this.maxDuration);
         LOGGER.info("Spent time: " + this.getTotalTimeMinutes());
         LOGGER.info("Total distance: " + this.getTotalDistance());
-        LOGGER.info("Total altitude change: " + this.getTotalAltitudeChange());
 
         LOGGER.info("Route: ");
-        for(Location p : this.visitedPoints){
-            LOGGER.info("\t" + p.getName());
+        Location p = this.start;
+        while(p != null){
+            LOGGER.info(p.toString());
+            p = p.getNext();
         }
     }
 }

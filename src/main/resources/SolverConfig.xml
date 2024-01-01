@@ -4,7 +4,7 @@
     <environmentMode>REPRODUCIBLE</environmentMode>
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
-    <entityClass>lv.lu.df.combopt.domain.Point</entityClass>
+    <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
 
     <!-- Define the score function -->
     <scoreDirectorFactory>
@@ -19,7 +19,11 @@
     <constructionHeuristic />
 
     <localSearch>
-        <subListChangeMoveSelector />
+        <unionMoveSelector>
+            <subChainChangeMoveSelector/>
+            <tailChainSwapMoveSelector/>
+            <subChainSwapMoveSelector/>
+        </unionMoveSelector>
         <acceptor>
             <valueTabuSize>2</valueTabuSize>
         </acceptor>
