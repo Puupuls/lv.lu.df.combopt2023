@@ -33,12 +33,14 @@ public class NavigationSolution {
     // Minutes
     private Integer maxDuration;
 
-    @PlanningEntityCollectionProperty
     @ValueRangeProvider
+    @PlanningEntityCollectionProperty
     @JsonIdentityReference(alwaysAsId = false)
     private List<Location> pointList = new ArrayList<>();
 
+    @ProblemFactProperty
     private Start start;
+    @ProblemFactProperty
     private TaskLocation end;
 
     private static int problemId = 0;
@@ -110,14 +112,14 @@ public class NavigationSolution {
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10) + 1);
-            p.setPrev(t);
+//            p.setPrev(t);
 //            t.setNext(p);
 //            t = p;
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
         problem.end.setPrev(t);
-//        t.setNext(problem.end);
+        t.setNext(problem.end);
 
         return problem;
     }

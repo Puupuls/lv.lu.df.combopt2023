@@ -18,10 +18,9 @@ public class TaskLocation extends Location{
     private Integer value = 0;
 
     @PlanningVariable(
-            graphType = PlanningVariableGraphType.CHAINED,
-            nullable = true
+            graphType = PlanningVariableGraphType.CHAINED
     )
-    private Location prev;
+    private Location prev=null;
 
     public TaskLocation(Double lat, Double lon, Double alt) {
         super(lat, lon, alt);

@@ -29,7 +29,7 @@ public class Location {
     }
 
     @ShadowVariable(sourceVariableName = "prev", variableListenerClass = PrevElemChangeListener.class)
-    private Location next;
+    private Location next = null;
 
     @JsonIgnore
     private Map<Location, Double> distanceMap = new HashMap<>();

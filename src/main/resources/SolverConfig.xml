@@ -16,7 +16,7 @@
         <secondsSpentLimit>10</secondsSpentLimit>
     </termination>
 
-    <constructionHeuristic />
+    <constructionHeuristic/>
 
     <localSearch>
         <unionMoveSelector>
