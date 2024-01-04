@@ -18,14 +18,17 @@
         <secondsSpentLimit>60</secondsSpentLimit>
     </termination>
 
-    <constructionHeuristic />
+    <constructionHeuristic>
+        <queuedValuePlacer>
+            <entityClass>lv.lu.df.combopt.domain.Point</entityClass>
+        </queuedValuePlacer>
+    </constructionHeuristic>
 
     <localSearch>
         <unionMoveSelector>
-            <listSwapMoveSelector/>
-            <listChangeMoveSelector/>
             <subListChangeMoveSelector/>
-            <subListSwapMoveSelector/>
+            <subListChangeMoveSelector/>
+            <changeMoveSelector/>
         </unionMoveSelector>
         <acceptor>
             <entityTabuRatio>0.1</entityTabuRatio>

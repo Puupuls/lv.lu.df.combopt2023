@@ -22,7 +22,7 @@ import java.util.List;
 public class Player {
     private String id;
 
-    @PlanningListVariable()
+    @PlanningListVariable(valueRangeProviderRefs = {"pointList"})
     @JsonIdentityReference(alwaysAsId = true)
     private List<Point> points = new ArrayList<>();
 

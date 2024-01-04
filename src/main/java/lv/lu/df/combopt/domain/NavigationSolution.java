@@ -35,9 +35,13 @@ public class NavigationSolution {
     private HardMediumSoftScore score;
 
     @ProblemFactCollectionProperty
-    @ValueRangeProvider
+    @ValueRangeProvider(id="pointList")
     @JsonIdentityReference(alwaysAsId = false)
     private List<Point> pointList = new ArrayList<>();
+
+    @ValueRangeProvider(id="booleanRange")
+    @ProblemFactProperty
+    private List<Boolean> booleanRange = Arrays.asList(true, false);
 
     @PlanningEntityProperty
     private Player player;

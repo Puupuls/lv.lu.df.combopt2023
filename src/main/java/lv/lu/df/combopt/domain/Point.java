@@ -40,7 +40,7 @@ public class Point {
     @JsonIdentityReference(alwaysAsId = true)
     private Point prev;
 
-    @ShadowVariable(variableListenerClass = PreviousPointListener.class, sourceVariableName = "prev")
+    @PlanningVariable(valueRangeProviderRefs = {"booleanRange"})
     private Boolean isVisited = false;
 
     @JsonIdentityReference(alwaysAsId = true)
