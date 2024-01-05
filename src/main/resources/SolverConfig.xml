@@ -16,13 +16,27 @@
         <secondsSpentLimit>10</secondsSpentLimit>
     </termination>
 
-    <constructionHeuristic/>
+    <constructionHeuristic>
+
+    </constructionHeuristic>
 
     <localSearch>
         <unionMoveSelector>
-            <subChainChangeMoveSelector/>
-            <tailChainSwapMoveSelector/>
-            <subChainSwapMoveSelector/>
+            <subChainChangeMoveSelector>
+                <entityClass>
+                    lv.lu.df.combopt.domain.TaskLocation
+                </entityClass>
+                <subChainSelector>
+                    <valueSelector variableName="prev"/>
+                </subChainSelector>
+                <valueSelector variableName="prev"/>
+            </subChainChangeMoveSelector>
+            <changeMoveSelector>
+                <entitySelector id="taskSelector">
+                    <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+                </entitySelector>
+                <valueSelector variableName="isVisited"/>
+            </changeMoveSelector>
         </unionMoveSelector>
         <acceptor>
             <valueTabuSize>2</valueTabuSize>

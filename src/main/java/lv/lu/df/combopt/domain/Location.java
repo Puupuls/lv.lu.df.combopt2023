@@ -19,7 +19,7 @@ public class Location {
     private Double alt;
 
     private String name;
-
+    private Boolean isVisited;
     private NavigationSolution navigationSolution;
 
     public Location(Double lat, Double lon, Double alt) {
@@ -93,5 +93,9 @@ public class Location {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+    }
+
+    public String toString() {
+        return this.getName() + " " + this.getIsVisited();
     }
 }

@@ -90,6 +90,7 @@ public class NavigationSolution {
         problem.start.setName("Start");
         problem.start.setTimeToComplete(0);
         problem.start.setNavigationSolution(problem);
+        problem.start.setIsVisited(true);
 
 
         problem.end = new End(
@@ -99,8 +100,9 @@ public class NavigationSolution {
         );
         problem.end.setName("End");
         problem.end.setTimeToComplete(0);
-        problem.getPointList().add(problem.end);
+        problem.end.setIsVisited(true);
         problem.end.setNavigationSolution(problem);
+        problem.getPointList().add(problem.end);
 
         Location t = problem.start;
         for (int i = 1; i <= pointCount; i++) {
@@ -112,9 +114,10 @@ public class NavigationSolution {
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10) + 1);
-//            p.setPrev(t);
-//            t.setNext(p);
-//            t = p;
+            p.setIsVisited(false);
+            p.setPrev(t);
+            t.setNext(p);
+            t = p;
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
