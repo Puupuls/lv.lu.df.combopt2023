@@ -18,6 +18,9 @@ public class Location {
     private Double lon;
     private Double alt;
 
+    private Integer value = 0;
+    private Integer timeToComplete = 0;
+
     private String name;
     private Boolean isVisited;
     private NavigationSolution navigationSolution;
@@ -27,9 +30,6 @@ public class Location {
         this.lon = lon;
         this.alt = alt;
     }
-
-    @ShadowVariable(sourceVariableName = "prev", variableListenerClass = PrevElemChangeListener.class)
-    private Location next = null;
 
     @JsonIgnore
     private Map<Location, Double> distanceMap = new HashMap<>();
@@ -96,6 +96,6 @@ public class Location {
     }
 
     public String toString() {
-        return this.getName() + " " + this.getIsVisited();
+        return this.getName() + " (" + this.getIsVisited() + ")";
     }
 }

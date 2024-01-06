@@ -33,9 +33,6 @@ public class Main {
         );
 
         Solver<NavigationSolution> solver = solverFactoryFromXML.buildSolver();
-        solver.addEventListener(
-                event -> LOGGER.info("1")
-        );
         NavigationSolution solution = solver.solve(problem);
 
         SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager = SolutionManager.create(solverFactory);

@@ -4,6 +4,7 @@ import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -39,9 +41,18 @@ public class NavigationSolution {
     private List<Location> pointList = new ArrayList<>();
 
     @ProblemFactProperty
+    @JsonIdentityReference(alwaysAsId = false)
     private Start start;
+
+    @ValueRangeProvider
+    @JsonIgnore
+    public List<Location> getStartList() {
+        return Collections.singletonList(start);
+    }
+
     @ProblemFactProperty
-    private TaskLocation end;
+    @JsonIdentityReference(alwaysAsId = false)
+    private End end;
 
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
@@ -61,11 +72,15 @@ public class NavigationSolution {
 
     public Double getTotalDistance() {
         Double dist = 0d;
-        Location p = this.start;
+        Location p = this.end;
         while(p != null){
-            if (p.getNext() == null) break;
-            dist += p.distanceTo(p.getNext());
-            p = p.getNext();
+            if(p instanceof TaskLocation tl) {
+                if (tl.getPrev() == null) break;
+                dist += p.distanceTo(tl.getPrev());
+                p = tl.getPrev();
+            } else {
+                break;
+            }
         }
         return dist;
     }
@@ -102,7 +117,6 @@ public class NavigationSolution {
         problem.end.setTimeToComplete(0);
         problem.end.setIsVisited(true);
         problem.end.setNavigationSolution(problem);
-        problem.getPointList().add(problem.end);
 
         Location t = problem.start;
         for (int i = 1; i <= pointCount; i++) {
@@ -115,14 +129,14 @@ public class NavigationSolution {
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10) + 1);
             p.setIsVisited(false);
-            p.setPrev(t);
-            t.setNext(p);
-            t = p;
+//            p.setPrev(t);
+//            t.setNext(p);
+//            t = p;
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
-        problem.end.setPrev(t);
-        t.setNext(problem.end);
+//        problem.end.setPrev(t);
+//        t.setNext(problem.end);
 
         return problem;
     }
@@ -135,10 +149,14 @@ public class NavigationSolution {
         LOGGER.info("Total distance: " + this.getTotalDistance());
 
         LOGGER.info("Route: ");
-        Location p = this.start;
+        Location p = this.end;
         while(p != null){
             LOGGER.info(p.toString());
-            p = p.getNext();
+            if(p instanceof TaskLocation tl) {
+                p = tl.getPrev();
+            } else {
+                break;
+            }
         }
     }
 }

@@ -6,6 +6,9 @@ import lv.lu.df.combopt.domain.Location;
 import lv.lu.df.combopt.domain.NavigationSolution;
 import lv.lu.df.combopt.domain.TaskLocation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PrevElemChangeListener implements VariableListener<NavigationSolution, Location> {
 
     @Override
@@ -15,17 +18,27 @@ public class PrevElemChangeListener implements VariableListener<NavigationSoluti
 
     @Override
     public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, Location location) {
-        // If location is of type TaskLocation, then it has a prev element
-        if (location instanceof TaskLocation) {
-            scoreDirector.beforeVariableChanged(((TaskLocation) location).getPrev(), "next");
-            ((TaskLocation) location).getPrev().setNext(location);
-            scoreDirector.afterVariableChanged(((TaskLocation) location).getPrev(), "next");
-        }else{
-            scoreDirector.beforeVariableChanged(location.getNavigationSolution().getStart(), "next");
-            location.getNavigationSolution().getStart().setNext(location);
-            scoreDirector.afterVariableChanged(location.getNavigationSolution().getStart(), "next");
+        if(location == location.getNavigationSolution().getEnd()){
+            return;
+        }
+        List<String> childLocations = new ArrayList<>();
+        for(Location tl : location.getNavigationSolution().getPointList()) {
+            TaskLocation tl1 = (TaskLocation) tl;
+            if (tl1.getPrev() != null) {
+                childLocations.add(tl1.getPrev().getName());
+            }
+        }
+        TaskLocation tail = (TaskLocation) location;
+        for(Location tl : location.getNavigationSolution().getPointList()) {
+            if(!childLocations.contains(tl.getName())) {
+                tail = (TaskLocation) tl;
+                break;
+            }
         }
 
+        scoreDirector.beforeVariableChanged(location.getNavigationSolution().getEnd(), "prev");
+        location.getNavigationSolution().getEnd().setPrev(tail);
+        scoreDirector.afterVariableChanged(location.getNavigationSolution().getEnd(), "prev");
     }
 
     @Override

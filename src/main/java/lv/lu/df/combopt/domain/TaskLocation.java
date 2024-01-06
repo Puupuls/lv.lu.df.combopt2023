@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lv.lu.df.combopt.solver.PrevElemChangeListener;
 
 @PlanningEntity
 @Getter @Setter @NoArgsConstructor
@@ -15,27 +16,19 @@ import lombok.Setter;
         property = "name",
         generator = ObjectIdGenerators.PropertyGenerator.class)
 public class TaskLocation extends Location{
-    private Integer timeToComplete = 0;
-    private Integer value = 0;
 
     @PlanningVariable(
             graphType = PlanningVariableGraphType.CHAINED
     )
     private Location prev=null;
 
+//    @ShadowVariable(sourceVariableName = "prev", variableListenerClass = PrevElemChangeListener.class)
+//    private Location next = null;
+
     @PlanningVariable(
             valueRangeProviderRefs = {"booleanRange"}
     )
     private Boolean isVisited = false;
-
-    public void setIsVisited(Boolean isVisited) {
-        this.isVisited = isVisited;
-        System.out.println("setIsVisited: " + isVisited);
-    }
-    public void setPrev(Location prev) {
-        this.prev = prev;
-        System.out.println("setPrev: " + prev);
-    }
 
     @ValueRangeProvider(id = "booleanRange")
     public Boolean[] getBooleanRange() {
@@ -44,5 +37,9 @@ public class TaskLocation extends Location{
 
     public TaskLocation(Double lat, Double lon, Double alt) {
         super(lat, lon, alt);
+    }
+
+    public String toString() {
+        return this.getName() + "(" + this.getIsVisited() + ") --> " + this.getPrev();
     }
 }

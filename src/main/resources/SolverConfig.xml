@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
-    <environmentMode>REPRODUCIBLE</environmentMode>
+    <environmentMode>FULL_ASSERT</environmentMode>
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
     <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
@@ -17,32 +17,38 @@
     </termination>
 
     <constructionHeuristic>
-
+        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
     </constructionHeuristic>
 
     <localSearch>
         <unionMoveSelector>
-            <subChainChangeMoveSelector>
-                <entityClass>
-                    lv.lu.df.combopt.domain.TaskLocation
-                </entityClass>
-                <subChainSelector>
-                    <valueSelector variableName="prev"/>
-                </subChainSelector>
-                <valueSelector variableName="prev"/>
-            </subChainChangeMoveSelector>
-            <changeMoveSelector>
-                <entitySelector id="taskSelector">
+            <changeMoveSelector >
+                <entitySelector>
                     <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
                 </entitySelector>
                 <valueSelector variableName="isVisited"/>
             </changeMoveSelector>
+            <subChainChangeMoveSelector>
+                <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+                <subChainSelector>
+                    <valueSelector variableName="prev"/>
+                    <maximumSubChainSize>50</maximumSubChainSize>
+                </subChainSelector>
+                <valueSelector variableName="prev"/>
+                <selectReversingMoveToo>true</selectReversingMoveToo>
+            </subChainChangeMoveSelector>
+<!--            <subChainSwapMoveSelector>-->
+<!--                <subChainSelector>-->
+<!--                    <maximumSubChainSize>50</maximumSubChainSize>-->
+<!--                </subChainSelector>-->
+<!--                <selectReversingMoveToo>true</selectReversingMoveToo>-->
+<!--            </subChainSwapMoveSelector>-->
         </unionMoveSelector>
         <acceptor>
-            <valueTabuSize>2</valueTabuSize>
+            <lateAcceptanceSize>400</lateAcceptanceSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>1000</acceptedCountLimit>
+            <acceptedCountLimit>1</acceptedCountLimit>
         </forager>
     </localSearch>
 </solver>
