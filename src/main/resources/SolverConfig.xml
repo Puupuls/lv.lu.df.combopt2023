@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
-    <environmentMode>FULL_ASSERT</environmentMode>
+    <environmentMode>REPRODUCIBLE</environmentMode>
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
     <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
@@ -37,12 +37,14 @@
                 <valueSelector variableName="prev"/>
                 <selectReversingMoveToo>true</selectReversingMoveToo>
             </subChainChangeMoveSelector>
-<!--            <subChainSwapMoveSelector>-->
-<!--                <subChainSelector>-->
-<!--                    <maximumSubChainSize>50</maximumSubChainSize>-->
-<!--                </subChainSelector>-->
-<!--                <selectReversingMoveToo>true</selectReversingMoveToo>-->
-<!--            </subChainSwapMoveSelector>-->
+            <subChainSwapMoveSelector>
+                <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+                <subChainSelector>
+                    <valueSelector variableName="prev"/>
+                    <maximumSubChainSize>50</maximumSubChainSize>
+                </subChainSelector>
+                <selectReversingMoveToo>true</selectReversingMoveToo>
+            </subChainSwapMoveSelector>
         </unionMoveSelector>
         <acceptor>
             <lateAcceptanceSize>400</lateAcceptanceSize>

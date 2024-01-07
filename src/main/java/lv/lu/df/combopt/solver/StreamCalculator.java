@@ -11,6 +11,7 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 missedPoints(constraintFactory),
+                shortestPath(constraintFactory)
         };
     }
 
@@ -19,6 +20,13 @@ public class StreamCalculator implements ConstraintProvider {
                 .forEach(TaskLocation.class)
                 .filter(v -> !v.getIsVisited())
                 .penalize(HardMediumSoftScore.ONE_MEDIUM, v -> v.getValue() + 1)
-                .asConstraint("overspentTime");
+                .asConstraint("missedPoints");
+    }
+
+    public Constraint shortestPath(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(TaskLocation.class)
+                .penalize(HardMediumSoftScore.ONE_SOFT, v -> v.getDistanceSinceStart())
+                .asConstraint("shortestPath");
     }
 }

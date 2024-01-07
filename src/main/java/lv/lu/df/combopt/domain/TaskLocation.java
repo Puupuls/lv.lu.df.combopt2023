@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lv.lu.df.combopt.solver.PrevElemChangeListener;
 
+import java.lang.annotation.Repeatable;
+
 @PlanningEntity
 @Getter @Setter @NoArgsConstructor
 @JsonIdentityInfo(scope = TaskLocation.class,
@@ -22,8 +24,15 @@ public class TaskLocation extends Location{
     )
     private Location prev=null;
 
-//    @ShadowVariable(sourceVariableName = "prev", variableListenerClass = PrevElemChangeListener.class)
-//    private Location next = null;
+    @ShadowVariable(
+            sourceVariableName = "prev",
+            variableListenerClass = PrevElemChangeListener.class
+    )
+    @ShadowVariable(
+            sourceVariableName = "isVisited",
+            variableListenerClass = PrevElemChangeListener.class
+    )
+    private Integer distanceSinceStart = 0;
 
     @PlanningVariable(
             valueRangeProviderRefs = {"booleanRange"}
@@ -40,6 +49,6 @@ public class TaskLocation extends Location{
     }
 
     public String toString() {
-        return this.getName() + "(" + this.getIsVisited() + ") --> " + this.getPrev();
+        return this.getName() + "(" + this.getIsVisited() + " " + this.getDistanceSinceStart() + " " + this.getValue() + ") --> " + this.getPrev();
     }
 }

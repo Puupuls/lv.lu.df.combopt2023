@@ -86,7 +86,7 @@ public class NavigationSolution {
     }
 
     public static NavigationSolution generateData(int pointCount) {
-        Random random = new Random();
+        Random random = new Random(19026);
         NavigationSolution problem = new NavigationSolution();
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
         problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
@@ -118,7 +118,6 @@ public class NavigationSolution {
         problem.end.setIsVisited(true);
         problem.end.setNavigationSolution(problem);
 
-        Location t = problem.start;
         for (int i = 1; i <= pointCount; i++) {
             TaskLocation p = new TaskLocation(
                     random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
@@ -127,16 +126,11 @@ public class NavigationSolution {
             );
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
-            p.setValue(random.nextInt(10) + 1);
+            p.setValue(random.nextInt(10));
             p.setIsVisited(false);
-//            p.setPrev(t);
-//            t.setNext(p);
-//            t = p;
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
-//        problem.end.setPrev(t);
-//        t.setNext(problem.end);
 
         return problem;
     }

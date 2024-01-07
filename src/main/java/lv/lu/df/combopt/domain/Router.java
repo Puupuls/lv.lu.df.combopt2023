@@ -40,7 +40,7 @@ public class Router {
                 ResponsePath path = rsp.getBest();
 
                 // distance in meters and time in millis in the response path
-                location.getDistanceMap().put(toLocation, path.getDistance() / 1000);
+                location.getDistanceMap().put(toLocation, (int)Math.round(path.getDistance()));
                 location.getTimeMap().put(toLocation,Math.toIntExact(path.getTime() / 1000));
             }
         }

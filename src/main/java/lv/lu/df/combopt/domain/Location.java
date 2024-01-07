@@ -10,6 +10,7 @@ import lombok.Setter;
 import lv.lu.df.combopt.solver.PrevElemChangeListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -20,6 +21,7 @@ public class Location {
 
     private Integer value = 0;
     private Integer timeToComplete = 0;
+    private Integer distanceSinceStart = 0;
 
     private String name;
     private Boolean isVisited;
@@ -31,8 +33,17 @@ public class Location {
         this.alt = alt;
     }
 
+    public TaskLocation getNext(List<Location> locations) {
+        for (Location l : locations) {
+            if(l instanceof TaskLocation tl && tl.getPrev() == this) {
+                return tl;
+            }
+        }
+        return null;
+    }
+
     @JsonIgnore
-    private Map<Location, Double> distanceMap = new HashMap<>();
+    private Map<Location, Integer> distanceMap = new HashMap<>();
     @JsonIgnore
     private Map<Location, Integer> timeMap = new HashMap<>();
 
@@ -45,8 +56,8 @@ public class Location {
         return time;
     }
 
-    public Double distanceTo(Location location) {
-        Double distance = this.distanceMap.get(location);
+    public Integer distanceTo(Location location) {
+        Integer distance = this.distanceMap.get(location);
         if (distance == null) {
             distance = this.simpleDistanceTo(location);
             this.distanceMap.put(location, distance);
@@ -54,7 +65,7 @@ public class Location {
         return distance;
     }
 
-    public Double simpleDistanceTo(Location location) {
+    public Integer simpleDistanceTo(Location location) {
         return distance(
                 this.getLat(),
                 location.getLat(),
@@ -75,7 +86,7 @@ public class Location {
      * el2 End altitude in meters
      * @returns Distance in Meters
      */
-    private static double distance(double lat1, double lat2, double lon1,
+    private static Integer distance(double lat1, double lat2, double lon1,
                                   double lon2, double el1, double el2) {
 
         final int R = 6371; // Radius of the earth
@@ -92,7 +103,7 @@ public class Location {
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
-        return Math.sqrt(distance);
+        return (int) Math.round(Math.sqrt(distance));
     }
 
     public String toString() {
