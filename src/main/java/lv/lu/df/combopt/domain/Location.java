@@ -24,7 +24,6 @@ public class Location {
     private Integer distanceSinceStart = 0;
 
     private String name;
-    private Boolean isVisited;
     private NavigationSolution navigationSolution;
 
     public Location(Double lat, Double lon, Double alt) {
@@ -107,6 +106,6 @@ public class Location {
     }
 
     public String toString() {
-        return this.getName() + " (" + this.getIsVisited() + ")";
+        return this.getName();
     }
 }

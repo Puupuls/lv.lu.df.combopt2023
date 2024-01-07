@@ -22,12 +22,6 @@
 
     <localSearch>
         <unionMoveSelector>
-            <changeMoveSelector >
-                <entitySelector>
-                    <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
-                </entitySelector>
-                <valueSelector variableName="isVisited"/>
-            </changeMoveSelector>
             <subChainChangeMoveSelector>
                 <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
                 <subChainSelector>

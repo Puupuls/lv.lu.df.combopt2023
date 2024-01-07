@@ -28,14 +28,11 @@ public class TaskLocation extends Location{
             sourceVariableName = "prev",
             variableListenerClass = PrevElemChangeListener.class
     )
-    @ShadowVariable(
-            sourceVariableName = "isVisited",
-            variableListenerClass = PrevElemChangeListener.class
-    )
     private Integer distanceSinceStart = 0;
 
-    @PlanningVariable(
-            valueRangeProviderRefs = {"booleanRange"}
+    @ShadowVariable(
+            sourceVariableName = "prev",
+            variableListenerClass = PrevElemChangeListener.class
     )
     private Boolean isVisited = false;
 
@@ -49,6 +46,6 @@ public class TaskLocation extends Location{
     }
 
     public String toString() {
-        return this.getName() + "(" + this.getIsVisited() + " " + this.getDistanceSinceStart() + " " + this.getValue() + ") --> " + this.getPrev();
+        return this.getName() + "(" + this.getIsVisited() + " " + this.getDistanceSinceStart() + " " + this.getValue() + ")";// --> " + this.getPrev();
     }
 }

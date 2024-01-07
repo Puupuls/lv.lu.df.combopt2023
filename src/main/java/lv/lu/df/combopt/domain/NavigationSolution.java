@@ -50,9 +50,9 @@ public class NavigationSolution {
         return Collections.singletonList(start);
     }
 
-    @ProblemFactProperty
+//    @ProblemFactProperty
     @JsonIdentityReference(alwaysAsId = false)
-    private End end;
+    private TaskLocation end;
 
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
@@ -105,18 +105,17 @@ public class NavigationSolution {
         problem.start.setName("Start");
         problem.start.setTimeToComplete(0);
         problem.start.setNavigationSolution(problem);
-        problem.start.setIsVisited(true);
 
 
-        problem.end = new End(
+        problem.end = new TaskLocation(
                 random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
                 random.nextDouble() * (UPPER_LEFT_COORD_LON - LOWER_RIGHT_COORD_LON) + UPPER_LEFT_COORD_LON,
                 random.nextDouble() * 25
         );
         problem.end.setName("End");
         problem.end.setTimeToComplete(0);
-        problem.end.setIsVisited(true);
         problem.end.setNavigationSolution(problem);
+        problem.getPointList().add(problem.end);
 
         for (int i = 1; i <= pointCount; i++) {
             TaskLocation p = new TaskLocation(
@@ -127,7 +126,6 @@ public class NavigationSolution {
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
             p.setValue(random.nextInt(10));
-            p.setIsVisited(false);
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }
