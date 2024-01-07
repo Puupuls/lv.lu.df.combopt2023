@@ -25,6 +25,7 @@ public class Router {
         router.setGraphHopperLocation(ghLocation);
         router.setProfiles(new Profile("car").setVehicle("car").setWeighting("shortest").setTurnCosts(false));
         router.getCHPreparationHandler().setCHProfiles(new CHProfile("car"));
+        router.setElevation(true);
         router.importOrLoad();
     }
 

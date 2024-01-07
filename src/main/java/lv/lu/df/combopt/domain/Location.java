@@ -2,7 +2,10 @@ package lv.lu.df.combopt.domain;
 
 import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 import ai.timefold.solver.core.impl.domain.variable.nextprev.PreviousElementVariableListener;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@JsonIdentityInfo(scope = Location.class,
+        property = "name",
+        generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Location {
     private Double lat;
     private Double lon;
@@ -24,6 +30,8 @@ public class Location {
     private Integer distanceSinceStart = 0;
 
     private String name;
+
+    @JsonIgnore
     private NavigationSolution navigationSolution;
 
     public Location(Double lat, Double lon, Double alt) {
@@ -64,17 +72,6 @@ public class Location {
         return distance;
     }
 
-    public Integer simpleDistanceTo(Location location) {
-        return distance(
-                this.getLat(),
-                location.getLat(),
-                this.getLon(),
-                location.getLon(),
-                this.getAlt(),
-                location.getAlt()
-        );
-    }
-
     /**
      * https://stackoverflow.com/a/16794680
      * Calculate distance between two points in latitude and longitude taking
@@ -85,20 +82,18 @@ public class Location {
      * el2 End altitude in meters
      * @returns Distance in Meters
      */
-    private static Integer distance(double lat1, double lat2, double lon1,
-                                  double lon2, double el1, double el2) {
-
+    public Integer simpleDistanceTo(Location location) {
         final int R = 6371; // Radius of the earth
 
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
+        double latDistance = Math.toRadians(location.lat - this.lat);
+        double lonDistance = Math.toRadians(location.lon - this.lon);
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                + Math.cos(Math.toRadians(this.lat)) * Math.cos(Math.toRadians(location.lat))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = R * c * 1000; // convert to meters
 
-        double height = el1 - el2;
+        double height = this.alt - location.alt;
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 

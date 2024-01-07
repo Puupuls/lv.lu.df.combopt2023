@@ -65,7 +65,7 @@ public class RoutingController {
 
     @PostConstruct
     public void init() {
-        NavigationSolution problem50 = NavigationSolution.generateData(50);
+        NavigationSolution problem50 = NavigationSolution.generateData(10);
         ghRouter.setDistanceTimeMap(problem50.getPointList());
         //solutionIOJSON.write(problem50, new File("data/exampleRiga50.json"));
         solverManager.solveAndListen(problem50.getSolutionId(), id -> problem50, solution -> {

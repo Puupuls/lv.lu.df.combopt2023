@@ -22,10 +22,10 @@ public class NavigationSolution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NavigationSolution.class);
 
-    private static final Double UPPER_LEFT_COORD_LAT = 56.9947;
-    private static final Double UPPER_LEFT_COORD_LON = 24.0309;
-    private static final Double LOWER_RIGHT_COORD_LAT = 56.8884;
-    private static final Double LOWER_RIGHT_COORD_LON = 24.2520;
+    private static final Double UPPER_LEFT_COORD_LAT = 56.95;
+    private static final Double UPPER_LEFT_COORD_LON = 24.10;
+    private static final Double LOWER_RIGHT_COORD_LAT = 56.90;
+    private static final Double LOWER_RIGHT_COORD_LON = 24.20;
 
     private String solutionId;
 
@@ -37,11 +37,9 @@ public class NavigationSolution {
 
     @ValueRangeProvider
     @PlanningEntityCollectionProperty
-    @JsonIdentityReference(alwaysAsId = false)
     private List<Location> pointList = new ArrayList<>();
 
     @ProblemFactProperty
-    @JsonIdentityReference(alwaysAsId = false)
     private Start start;
 
     @ValueRangeProvider
@@ -51,7 +49,6 @@ public class NavigationSolution {
     }
 
 //    @ProblemFactProperty
-    @JsonIdentityReference(alwaysAsId = false)
     private TaskLocation end;
 
     private static int problemId = 0;
@@ -60,8 +57,6 @@ public class NavigationSolution {
     private Integer distanceCost = 1;
     private Integer altitudeCost = 5;
     private Double speed = 5d; // km/h
-
-    private NavigationSolution problem;
 
     public Integer getMinutesToTravel(double distance) {
         return (int) Math.round(distance/1000 / speed * 60);
@@ -91,7 +86,6 @@ public class NavigationSolution {
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
         problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
 
-        problem.setProblem(problem);
         problem.setDistanceCost(1);
         problem.setAltitudeCost(10);
         problem.setSpeed(5d);

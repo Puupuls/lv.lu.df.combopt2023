@@ -21,6 +21,12 @@ public class PrevElemChangeListener implements VariableListener<NavigationSoluti
 
     @Override
     public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, TaskLocation location) {
+        if(location.getPrev() != null) {
+            scoreDirector.beforeVariableChanged(location, "distanceToPrev");
+            location.setDistanceToPrev(location.distanceTo(location.getPrev()));
+            scoreDirector.afterVariableChanged(location, "distanceToPrev");
+        }
+
         List<Location> chain = new ArrayList<>();
         chain.add(location);
 
