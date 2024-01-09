@@ -12,6 +12,7 @@ import lv.lu.df.combopt.solver.SimpleIndictmentObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,14 @@ public class RoutingController {
     @PostMapping("/solve")
     public void solve(@RequestBody NavigationSolution problem) {
         ghRouter.setDistanceTimeMap(problem.getPointList());
-        solverManager.solveAndListen(problem.getSolutionId(), id -> problem,
-                solution -> solutionMap.put(solution.getSolutionId(), solution));
+        solverManager.solveAndListen(
+                problem.getSolutionId(),
+                id -> problem,
+                solution -> {
+                    solution.setLastSolutionTime(LocalDateTime.now());
+                    solutionMap.put(solution.getSolutionId(), solution);
+                }
+        );
     }
 
     @GetMapping("/solution")
@@ -65,11 +72,17 @@ public class RoutingController {
 
     @PostConstruct
     public void init() {
-        NavigationSolution problem50 = NavigationSolution.generateData(10);
-        ghRouter.setDistanceTimeMap(problem50.getPointList());
-        //solutionIOJSON.write(problem50, new File("data/exampleRiga50.json"));
-        solverManager.solveAndListen(problem50.getSolutionId(), id -> problem50, solution -> {
-            solutionMap.put(solution.getSolutionId(), solution);});
+        NavigationSolution problem = NavigationSolution.generateData(30);
+        ghRouter.setDistanceTimeMap(problem.getPointList());
+
+        solverManager.solveAndListen(
+                problem.getSolutionId(),
+                id -> problem,
+                solution -> {
+                    solution.setLastSolutionTime(LocalDateTime.now());
+                    solutionMap.put(solution.getSolutionId(), solution);
+                }
+        );
     }
 
 }

@@ -1,7 +1,4 @@
 let map = L.map('map').setView([56.97, 24.0309], 13);
-let color_idx = 0;
-const colors = ["#f44336","#e81e63","#9c27b0","#673ab7","#3f51b5","#2196f3","#03a9f4","#00bcd4","#009688",
-    "#4caf50","#8bc34a","#cddc39","#ffeb3b","#ffc107","#ff9800","#ff5722"];
 
 const locationGreenIcon = L.divIcon({
     html: '<i class="fas fa-map-marker-alt" style="color: #00bb00"></i>',
@@ -24,15 +21,18 @@ const startIcon = L.divIcon({
     className: 'dummy'
 });
 
+const urlParams = new URLSearchParams(window.location.search);
+const solutionId = urlParams.get('id');
 $(document).ready(function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const solutionId = urlParams.get('id');
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+    getData()
+});
 
+function getData() {
     $.getJSON("/routes/score?id=" + solutionId, function(analysis) {
         $("#score_a").attr({
             "title":"Score Brakedown",
@@ -56,10 +56,24 @@ $(document).ready(function () {
             })
         })
     });
-});
+}
 
 function renderRoute(solution, indictments) {
-    $("#solutionTitle").text("solutionId: " + solution.solutionId);
+    $("#solutionTitle").html(
+        `
+            <h3>Route ${solutionId}</h3>
+            <p>
+                <b>Created:</b> ${solution.created}
+                <br/>
+                <b>Last sol:</b> ${solution.lastSolutionTime}
+            </p>
+        `
+    );
+    map.eachLayer((layer) => {
+        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+            layer.remove();
+        }
+    });
 
     var indictmentMap = {};
     indictments.forEach((indictment) => {
@@ -88,7 +102,8 @@ function renderRoute(solution, indictments) {
                 marker.setIcon(locationGreenIcon);
             }
         }
-        if(point.prev){
+        marker.bindPopup(getEntityPopoverContent(point, indictmentMap))
+        if(point.prev && points[point.name].isVisited){
             const next_location = [points[point.prev].lat, points[point.prev].lon];
             L.polyline([location, next_location], {color: "#00000077"}).addTo(map);
             // Add dist to prev on line
@@ -104,9 +119,9 @@ function renderRoute(solution, indictments) {
     });
 }
 
-function getEntityPopoverContent(entityId, indictmentMap) {
+function getEntityPopoverContent(point, indictmentMap) {
     var popover_content = "";
-    const indictment = indictmentMap[entityId];
+    const indictment = indictmentMap[point.name];
     if (indictment != null) {
         popover_content = popover_content + "Total score: <b>" + indictment.score + "</b> (" + indictment.matchCount + ")<br>";
         indictment.constraintMatches.forEach((match) => {
@@ -118,19 +133,6 @@ function getEntityPopoverContent(entityId, indictmentMap) {
         })
     }
     return popover_content;
-}
-
-function getVisitIcon(v_type, indictment) {
-    if (indictment==undefined || getHardScore(indictment.score) == 0) {
-        return v_type == "STOCK" ? stockIcon : v_type == "PICKUP" ? pickupIcon : deliveryIcon;
-    } else {
-        return v_type == "STOCK" ? stockIcon_red : v_type == "PICKUP" ? pickupIcon_red : deliveryIcon_red;
-    }
-}
-
-function getColor() {
-    color_idx = (color_idx + 1) % colors.length;
-    return colors[color_idx];
 }
 
 function getScorePopoverContent(constraint_list) {

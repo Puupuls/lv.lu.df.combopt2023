@@ -33,6 +33,9 @@ public class Main {
         );
 
         Solver<NavigationSolution> solver = solverFactoryFromXML.buildSolver();
+        solver.addEventListener(event -> {
+            LOGGER.info("New best solution found: {}", event.getNewBestScore());
+        });
         NavigationSolution solution = solver.solve(problem);
 
         SolutionManager<NavigationSolution, HardMediumSoftScore> solutionManager = SolutionManager.create(solverFactory);

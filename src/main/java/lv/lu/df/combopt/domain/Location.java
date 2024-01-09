@@ -1,5 +1,7 @@
 package lv.lu.df.combopt.domain;
 
+import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
+import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
 import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
 import ai.timefold.solver.core.impl.domain.variable.nextprev.PreviousElementVariableListener;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;

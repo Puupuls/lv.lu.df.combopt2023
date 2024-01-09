@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver xmlns="https://timefold.ai/xsd/solver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
-    <environmentMode>REPRODUCIBLE</environmentMode>
+<!--    <environmentMode>REPRODUCIBLE</environmentMode>-->
+    <environmentMode>FAST_ASSERT</environmentMode>
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
     <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
@@ -13,7 +14,7 @@
 
     <!-- Configure the optimization algorithms (optional) -->
     <termination>
-        <secondsSpentLimit>60</secondsSpentLimit>
+        <secondsSpentLimit>180</secondsSpentLimit>
     </termination>
 
     <constructionHeuristic>
@@ -22,29 +23,49 @@
 
     <localSearch>
         <unionMoveSelector>
+            <changeMoveSelector>
+                <valueSelector>
+                    <nearbySelection>
+                        <originEntitySelector>
+                            <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+                        </originEntitySelector>
+                        <nearbyDistanceMeterClass>lv.lu.df.combopt.domain.DistanceMeter</nearbyDistanceMeterClass>
+                        <parabolicDistributionSizeMaximum>40</parabolicDistributionSizeMaximum>
+                    </nearbySelection>
+                </valueSelector>
+            </changeMoveSelector>
+            <swapMoveSelector>
+                <secondaryEntitySelector>
+                    <nearbySelection>
+                        <originEntitySelector>
+                            <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+                        </originEntitySelector>
+                        <nearbyDistanceMeterClass>lv.lu.df.combopt.domain.DistanceMeter</nearbyDistanceMeterClass>
+                        <nearbySelectionDistributionType>PARABOLIC_DISTRIBUTION</nearbySelectionDistributionType>
+                    </nearbySelection>
+                </secondaryEntitySelector>
+            </swapMoveSelector>
             <subChainChangeMoveSelector>
-                <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
                 <subChainSelector>
-                    <valueSelector variableName="prev"/>
-                    <maximumSubChainSize>50</maximumSubChainSize>
+                    <minimumSubChainSize>2</minimumSubChainSize>
                 </subChainSelector>
-                <valueSelector variableName="prev"/>
-                <selectReversingMoveToo>true</selectReversingMoveToo>
+
             </subChainChangeMoveSelector>
             <subChainSwapMoveSelector>
-                <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
                 <subChainSelector>
-                    <valueSelector variableName="prev"/>
-                    <maximumSubChainSize>50</maximumSubChainSize>
+                    <minimumSubChainSize>2</minimumSubChainSize>
                 </subChainSelector>
-                <selectReversingMoveToo>true</selectReversingMoveToo>
+                <secondarySubChainSelector>
+                    <minimumSubChainSize>2</minimumSubChainSize>
+                </secondarySubChainSelector>
             </subChainSwapMoveSelector>
         </unionMoveSelector>
         <acceptor>
-            <valueTabuSize>5</valueTabuSize>
+            <entityTabuRatio>0.25</entityTabuRatio>
         </acceptor>
         <forager>
             <acceptedCountLimit>1000</acceptedCountLimit>
+            <breakTieRandomly>true</breakTieRandomly>
         </forager>
     </localSearch>
 </solver>

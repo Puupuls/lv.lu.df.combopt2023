@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,9 @@ public class NavigationSolution {
     private static final Double LOWER_RIGHT_COORD_LON = 24.20;
 
     private String solutionId;
+
+    private LocalDateTime created;
+    private LocalDateTime lastSolutionTime;
 
     @PlanningScore
     private HardMediumSoftScore score;
@@ -83,6 +87,7 @@ public class NavigationSolution {
     public static NavigationSolution generateData(int pointCount) {
         Random random = new Random(19026);
         NavigationSolution problem = new NavigationSolution();
+        problem.setCreated(LocalDateTime.now());
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
         problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
 

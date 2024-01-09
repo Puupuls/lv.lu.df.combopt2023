@@ -32,16 +32,10 @@ public class TaskLocation extends Location{
     )
     private Integer distanceSinceStart = 0;
 
-    @ShadowVariable(
-            sourceVariableName = "prev",
-            variableListenerClass = PrevElemChangeListener.class
-    )
+    @PiggybackShadowVariable(shadowVariableName = "distanceSinceStart")
     private Integer distanceToPrev = 0;
 
-    @ShadowVariable(
-            sourceVariableName = "prev",
-            variableListenerClass = PrevElemChangeListener.class
-    )
+    @PiggybackShadowVariable(shadowVariableName = "distanceSinceStart")
     private Boolean isVisited = false;
 
     @ValueRangeProvider(id = "booleanRange")
