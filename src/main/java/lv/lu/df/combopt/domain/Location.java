@@ -25,6 +25,7 @@ import java.util.Map;
         generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Location {
     @InverseRelationShadowVariable(sourceVariableName = "prev")
+    @JsonIdentityReference(alwaysAsId = true)
     TaskLocation next;
 
     private Double lat;

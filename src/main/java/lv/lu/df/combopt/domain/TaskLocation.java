@@ -28,6 +28,7 @@ public class TaskLocation extends Location{
     private Location prev=null;
 
     @AnchorShadowVariable(sourceVariableName = "prev")
+    @JsonIdentityReference(alwaysAsId = true)
     private Start anchor;
 
     @ShadowVariable(
