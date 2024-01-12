@@ -23,28 +23,8 @@
 
     <localSearch>
         <unionMoveSelector>
-            <changeMoveSelector>
-                <valueSelector>
-                    <nearbySelection>
-                        <originEntitySelector>
-                            <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
-                        </originEntitySelector>
-                        <nearbyDistanceMeterClass>lv.lu.df.combopt.domain.DistanceMeter</nearbyDistanceMeterClass>
-                        <parabolicDistributionSizeMaximum>40</parabolicDistributionSizeMaximum>
-                    </nearbySelection>
-                </valueSelector>
-            </changeMoveSelector>
-            <swapMoveSelector>
-                <secondaryEntitySelector>
-                    <nearbySelection>
-                        <originEntitySelector>
-                            <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
-                        </originEntitySelector>
-                        <nearbyDistanceMeterClass>lv.lu.df.combopt.domain.DistanceMeter</nearbyDistanceMeterClass>
-                        <nearbySelectionDistributionType>PARABOLIC_DISTRIBUTION</nearbySelectionDistributionType>
-                    </nearbySelection>
-                </secondaryEntitySelector>
-            </swapMoveSelector>
+            <changeMoveSelector />
+            <swapMoveSelector />
             <subChainChangeMoveSelector>
                 <subChainSelector>
                     <minimumSubChainSize>2</minimumSubChainSize>
