@@ -5,6 +5,7 @@
     <environmentMode>FAST_ASSERT</environmentMode>
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
+    <entityClass>lv.lu.df.combopt.domain.Location</entityClass>
     <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
 
     <!-- Define the score function -->

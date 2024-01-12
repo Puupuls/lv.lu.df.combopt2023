@@ -39,3 +39,4 @@ build/
 local/
 .ghtemp
 /.idea/
+.idea

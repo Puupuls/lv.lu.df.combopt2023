@@ -21,10 +21,14 @@ import java.lang.annotation.Repeatable;
 public class TaskLocation extends Location{
 
     @PlanningVariable(
-            graphType = PlanningVariableGraphType.CHAINED
+            graphType = PlanningVariableGraphType.CHAINED,
+            valueRangeProviderRefs = {"startList", "pointList"}
     )
     @JsonIdentityReference(alwaysAsId = true)
     private Location prev=null;
+
+    @AnchorShadowVariable(sourceVariableName = "prev")
+    private Start anchor;
 
     @ShadowVariable(
             sourceVariableName = "prev",

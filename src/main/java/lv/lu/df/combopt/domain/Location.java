@@ -18,11 +18,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@PlanningEntity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIdentityInfo(scope = Location.class,
         property = "name",
         generator = ObjectIdGenerators.PropertyGenerator.class)
 public class Location {
+    @InverseRelationShadowVariable(sourceVariableName = "prev")
+    TaskLocation next;
+
     private Double lat;
     private Double lon;
     private Double alt;

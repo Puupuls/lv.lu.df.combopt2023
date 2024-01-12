@@ -39,14 +39,14 @@ public class NavigationSolution {
     // Minutes
     private Integer maxDuration;
 
-    @ValueRangeProvider
+    @ValueRangeProvider(id = "pointList")
     @PlanningEntityCollectionProperty
     private List<Location> pointList = new ArrayList<>();
 
     @ProblemFactProperty
     private Start start;
 
-    @ValueRangeProvider
+    @ValueRangeProvider(id = "startList")
     @JsonIgnore
     public List<Location> getStartList() {
         return Collections.singletonList(start);
