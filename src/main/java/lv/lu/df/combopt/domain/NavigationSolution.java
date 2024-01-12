@@ -86,6 +86,10 @@ public class NavigationSolution {
             time += p.timeTo(p.getNext());
             time += p.getTimeToComplete();
             p = p.getNext();
+            if(p == this.end){
+                time += p.getTimeToComplete();
+                break;
+            }
         }
         return time;
     }
@@ -95,7 +99,7 @@ public class NavigationSolution {
         NavigationSolution problem = new NavigationSolution();
         problem.setCreated(LocalDateTime.now());
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
-        problem.maxDuration = pointCount * 10; // 10 minūtes uz punktu
+        problem.maxDuration = pointCount * 10 * 60; // 10 minutes per point
 
         problem.setDistanceCost(1);
         problem.setAltitudeCost(10);
@@ -130,7 +134,7 @@ public class NavigationSolution {
             );
             p.setName("Point " + i);
             p.setTimeToComplete(random.nextInt(10) + 1);
-            p.setValue(random.nextInt(10));
+            p.setValue(random.nextInt(10)+1);
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
         }

@@ -8,7 +8,7 @@
             <environmentMode>REPRODUCIBLE</environmentMode>
             <!-- Define the model -->
             <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
-            <entityClass>lv.lu.df.combopt.domain.Player</entityClass>
+            <entityClass>lv.lu.df.combopt.domain.Location</entityClass>
             <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
 
             <!-- Define the score function -->
@@ -18,7 +18,7 @@
 
             <!-- Configure the optimization algorithms (optional) -->
             <termination>
-                <secondsSpentLimit>10</secondsSpentLimit>
+                <secondsSpentLimit>60</secondsSpentLimit>
             </termination>
 
             <constructionHeuristic />
@@ -31,7 +31,7 @@
             <inputSolutionFile>data/example100.json</inputSolutionFile>
              <inputSolutionFile>data/example150.json</inputSolutionFile>-->
         </problemBenchmarks>
-        <!--<subSingleCount>5</subSingleCount>-->
+<!--        <subSingleCount>5</subSingleCount>-->
     </inheritedSolverBenchmark>
 
     <solverBenchmark>

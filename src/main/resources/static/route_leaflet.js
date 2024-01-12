@@ -1,4 +1,4 @@
-let map = L.map('map').setView([56.95, 24.05], 12);
+let map = L.map('map').setView([56.95, 24.05], 13);
 
 const locationGreenIcon = L.divIcon({
     html: '<i class="fas fa-map-marker-alt" style="color: #00bb00"></i>',
@@ -59,13 +59,29 @@ function getData() {
 }
 
 function renderRoute(solution, indictments) {
+    let visited_points = [];
+    let unvisited_points = [];
+    solution.pointList.forEach((point) => {
+        if(point.isVisited) {
+            visited_points.push(point);
+        } else {
+            unvisited_points.push(point);
+        }
+    });
     $("#solutionTitle").html(
         `
             <h3>Route ${solutionId}</h3>
             <p>
-                <b>Created:</b> ${solution.created}
+                <b>Created:</b> <br/> ${solution.created}
                 <br/>
-                <b>Last sol:</b> ${solution.lastSolutionTime}
+                <b>Last solution:</b> <br/> ${solution.lastSolutionTime}
+                <br/>
+                <b>Path distance:</b> <br/> ${solution.totalDistance/1000} km
+                <br/>
+                <b>Time taken:</b> <br/> ${formatTime(solution.totalTime)} / ${formatTime(solution.maxDuration)}
+                <br/>
+                <b>Points visited:</b> <br/> ${visited_points.length} / ${solution.pointList.length}
+                <br/>
             </p>
         `
     );
@@ -110,15 +126,19 @@ function renderRoute(solution, indictments) {
 }
 
 function getEntityPopoverContent(point, indictmentMap) {
-    var popover_content = "";
+    var popover_content = `<b>${point.name}</b> <br/>
+    Value: ${point.value}<br/>
+    Time since start: ${formatTime(point.timeSinceStart)}<br/>
+    Distance from previous: ${point.distanceToPrev/1000}km<br/>
+    <hr/>`;
     const indictment = indictmentMap[point.name];
     if (indictment != null) {
-        popover_content = popover_content + "Total score: <b>" + indictment.score + "</b> (" + indictment.matchCount + ")<br>";
+        popover_content += `Score: <b>${indictment.score}</b> (${indictment.matchCount})<hr>Indicaments:<br>`;
         indictment.constraintMatches.forEach((match) => {
             if (getHardScore(match.score) == 0) {
-                popover_content = popover_content + match.constraintName + " : " + match.score + "<br>";
+                popover_content += `<b>${match.constraintName}</b> : ${match.score}<br>`;
             } else {
-                popover_content = popover_content + "<b>" + match.constraintName + " : " + match.score + "</b><br>";
+                popover_content += `<b> ${match.constraintName}</b> : ${match.score}<br>`;
             }
         })
     }
@@ -126,12 +146,12 @@ function getEntityPopoverContent(point, indictmentMap) {
 }
 
 function getScorePopoverContent(constraint_list) {
-    var popover_content = "";
+    var popover_content = ``;
     constraint_list.forEach((constraint) => {
-        if (getHardScore(constraint.score) == 0) {
-            popover_content = popover_content + constraint.name + " : " + constraint.score + "<br>";
+        if (getHardScore(constraint.score) === 0) {
+            popover_content += `${constraint.name} : {constraint.score}<br>`;
         } else {
-            popover_content = popover_content + "<b>" + constraint.name + " : " + constraint.score + "</b><br>";
+            popover_content += `<b>${constraint.name}: ${constraint.score}</b><br>`;
         }
     })
     return popover_content;

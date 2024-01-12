@@ -11,17 +11,27 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 overspentTime(constraintFactory),
+                endIsIncluded(constraintFactory),
                 missedPoints(constraintFactory),
-                shortestPath(constraintFactory)
+                distanceToPrev(constraintFactory),
+                taskCompletionTime(constraintFactory)
         };
     }
 
     public Constraint overspentTime(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(TaskLocation.class)
-                .filter(v -> v.getName().equals("End"))
-                .penalize(HardMediumSoftScore.ONE_HARD, v -> Math.max((int)Math.round(v.getDistanceSinceStart()/1000.0/5*60 - v.getNavigationSolution().getMaxDuration()), 0))
+                .filter(v -> v.getName().equals("End") && v.getIsVisited())
+                .penalize(HardMediumSoftScore.ONE_HARD, v -> Math.max(v.getTimeSinceStart() + v.getTimeToComplete() - v.getNavigationSolution().getMaxDuration(), 0))
                 .asConstraint("overspentTime");
+    }
+
+    public Constraint endIsIncluded(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(TaskLocation.class)
+                .filter(v -> v.getName().equals("End"))
+                .penalize(HardMediumSoftScore.ONE_HARD, v -> v.getIsVisited() ? 0 : 1)
+                .asConstraint("endIsIncluded");
     }
 
     public Constraint missedPoints(ConstraintFactory constraintFactory) {
@@ -32,11 +42,19 @@ public class StreamCalculator implements ConstraintProvider {
                 .asConstraint("missedPoints");
     }
 
-    public Constraint shortestPath(ConstraintFactory constraintFactory) {
+    public Constraint distanceToPrev(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(TaskLocation.class)
                 .filter(TaskLocation::getIsVisited)
-                .penalize(HardMediumSoftScore.ONE_SOFT, v -> v.getDistanceSinceStart())
+                .penalize(HardMediumSoftScore.ONE_SOFT, TaskLocation::getDistanceToPrev)
+                .asConstraint("distanceToPrev");
+    }
+
+    public Constraint taskCompletionTime(ConstraintFactory constraintFactory) {
+        return constraintFactory
+                .forEach(TaskLocation.class)
+                .filter(TaskLocation::getIsVisited)
+                .penalize(HardMediumSoftScore.ONE_SOFT, Location::getTimeToComplete)
                 .asConstraint("shortestPath");
     }
 

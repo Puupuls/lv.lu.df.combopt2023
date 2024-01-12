@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html class="d-flex w-100 h-100" lang="en">
 <head>
     <title>Route Optimization Service</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="/webjars/font-awesome/css/all.min.css">
     <link rel="icon" href="/webjars/timefold/img/timefold-favicon.svg" type="image/svg+xml">
 </head>
-<body>
-<button class=" position-fixed top-0 end-0" onclick="getData()">Refresh</button>
-<p id="solutionTitle"></p>
-<div class="container p-0 m-0">
-    <h1><a id="score_a" data-toggle="popover"><span id="score_text"></span></a></h1>
+<body class="row flex-fill">
+<div class="col-5 col-sm-4 col-md-2" style="min-width: 100px;">
+    <button class="" onclick="getData()">Refresh</button>
+    <h5 class="mt-2"><a id="score_a" data-toggle="popover"><span id="score_text"></span></a></h5>
+    <p id="solutionTitle"></p>
 </div>
-<div id="map" style="height: 750px;"></div>
+<div id="map" class="col-7 col-sm-8 col-md-10"></div>
 <script src="/webjars/leaflet/leaflet.js"></script>
 <script src="/webjars/jquery/jquery.min.js"></script>
 <script src="/webjars/bootstrap/js/bootstrap.bundle.min.js"></script>
