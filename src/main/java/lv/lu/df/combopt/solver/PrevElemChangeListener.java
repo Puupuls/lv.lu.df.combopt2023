@@ -20,59 +20,50 @@ public class PrevElemChangeListener implements VariableListener<NavigationSoluti
     }
 
     @Override
-    public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, TaskLocation locc) {
-        for(Location llocc : locc.getNavigationSolution().getPointList()) {
-            TaskLocation location = (TaskLocation) llocc;
-            if (location.getPrev() != null) {
-                scoreDirector.beforeVariableChanged(location, "distanceToPrev");
-                location.setDistanceToPrev(location.distanceTo(location.getPrev()));
-                scoreDirector.afterVariableChanged(location, "distanceToPrev");
-            }
+    public void afterVariableChanged(ScoreDirector<NavigationSolution> scoreDirector, TaskLocation location) {
+        // Update:
+        // distanceToPrev
+        // distanceSinceStart
+        // timeSinceStart
+        // isVisited
 
-            List<Location> chain = new ArrayList<>();
-            chain.add(location);
+        if(location.getPrev() == null) {
+            scoreDirector.beforeVariableChanged(location, "distanceToPrev");
+            location.setDistanceToPrev(0);
+            scoreDirector.afterVariableChanged(location, "distanceToPrev");
+            scoreDirector.beforeVariableChanged(location, "distanceSinceStart");
+            location.setDistanceSinceStart(0);
+            scoreDirector.afterVariableChanged(location, "distanceSinceStart");
+            scoreDirector.beforeVariableChanged(location, "timeSinceStart");
+            location.setTimeSinceStart(0);
+            scoreDirector.afterVariableChanged(location, "timeSinceStart");
+            scoreDirector.beforeVariableChanged(location, "isVisited");
+            location.setIsVisited(false);
+            scoreDirector.afterVariableChanged(location, "isVisited");
+        }else{
+            TaskLocation loc = location;
+            while(loc != null){
+                scoreDirector.beforeVariableChanged(loc, "distanceToPrev");
+                loc.setDistanceToPrev(loc.distanceTo(loc.getPrev()));
+                scoreDirector.afterVariableChanged(loc, "distanceToPrev");
 
-            Location l = location;
-            while (l instanceof TaskLocation tl) {
-                l = tl.getPrev();
-                if (l != null) {
-                    chain.add(l);
-                }
-            }
-            Collections.reverse(chain);
+                scoreDirector.beforeVariableChanged(loc, "distanceSinceStart");
+                loc.setDistanceSinceStart(loc.getPrev().getDistanceSinceStart() + loc.distanceTo(loc.getPrev()));
+                scoreDirector.afterVariableChanged(loc, "distanceSinceStart");
 
-            boolean sawStart = false;
-            boolean sawEnd = false;
+                scoreDirector.beforeVariableChanged(loc, "timeSinceStart");
+                loc.setTimeSinceStart(loc.getPrev().getTimeSinceStart() + loc.timeTo(loc.getPrev()) + loc.getPrev().getTimeToComplete());
+                scoreDirector.afterVariableChanged(loc, "timeSinceStart");
 
-//        System.out.println("==================================");
-            for (Location loc : chain) {
-                if (Objects.equals(loc.getName(), "Start")) {
-                    sawStart = true;
-                }
-                if (Objects.equals(loc.getName(), "End")) {
-                    sawEnd = true;
-                }
-                if (loc instanceof TaskLocation tl) {
-                    scoreDirector.beforeVariableChanged(tl, "isVisited");
-                    if (sawStart) {
-                        if (sawEnd && !Objects.equals(loc.getName(), "End")) {
-                            tl.setIsVisited(false);
-                        } else {
-                            tl.setIsVisited(true);
-                        }
-                    } else {
-                        tl.setIsVisited(false);
-                    }
-                    scoreDirector.afterVariableChanged(tl, "isVisited");
-                    scoreDirector.beforeVariableChanged(loc, "distanceSinceStart");
-                    if (tl.getPrev() != null) {
-                        tl.setDistanceSinceStart(tl.getPrev().getDistanceSinceStart() + tl.distanceTo(tl.getPrev()));
-                    } else {
-                        tl.setDistanceSinceStart(0);
-                    }
-                    scoreDirector.afterVariableChanged(loc, "distanceSinceStart");
-                }
-//            System.out.println(location);
+                Boolean isVisited = loc.getPrev().getIsVisited();
+                isVisited = isVisited || Objects.equals(loc.getName(), "End");
+                isVisited = isVisited && !Objects.equals(loc.getPrev().getName(), "End");
+                isVisited = isVisited || loc.getPrev() instanceof Start;
+                scoreDirector.beforeVariableChanged(loc, "isVisited");
+                loc.setIsVisited(isVisited);
+                scoreDirector.afterVariableChanged(loc, "isVisited");
+
+                loc = loc.getNext();
             }
         }
     }

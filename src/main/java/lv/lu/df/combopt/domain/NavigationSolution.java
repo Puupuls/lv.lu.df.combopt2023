@@ -23,10 +23,10 @@ public class NavigationSolution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NavigationSolution.class);
 
-    private static final Double UPPER_LEFT_COORD_LAT = 56.95;
-    private static final Double UPPER_LEFT_COORD_LON = 24.10;
-    private static final Double LOWER_RIGHT_COORD_LAT = 56.90;
-    private static final Double LOWER_RIGHT_COORD_LON = 24.20;
+    private static final Double UPPER_LEFT_COORD_LAT = 56.92;
+    private static final Double UPPER_LEFT_COORD_LON = 24.13;
+    private static final Double LOWER_RIGHT_COORD_LAT = 56.87;
+    private static final Double LOWER_RIGHT_COORD_LON = 24.28;
 
     private String solutionId;
 
@@ -71,17 +71,23 @@ public class NavigationSolution {
 
     public Double getTotalDistance() {
         Double dist = 0d;
-        Location p = this.end;
-        while(p != null){
-            if(p instanceof TaskLocation tl) {
-                if (tl.getPrev() == null) break;
-                dist += p.distanceTo(tl.getPrev());
-                p = tl.getPrev();
-            } else {
-                break;
-            }
+        Location p = this.start;
+        while(p.getNext() != null){
+            dist += p.distanceTo(p.getNext());
+            p = p.getNext();
         }
         return dist;
+    }
+
+    public Double getTotalTime(){
+        Double time = 0d;
+        Location p = this.start;
+        while(p.getNext() != null){
+            time += p.timeTo(p.getNext());
+            time += p.getTimeToComplete();
+            p = p.getNext();
+        }
+        return time;
     }
 
     public static NavigationSolution generateData(int pointCount) {

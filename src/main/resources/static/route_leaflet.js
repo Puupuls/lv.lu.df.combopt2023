@@ -1,4 +1,4 @@
-let map = L.map('map').setView([56.97, 24.0309], 13);
+let map = L.map('map').setView([56.95, 24.05], 12);
 
 const locationGreenIcon = L.divIcon({
     html: '<i class="fas fa-map-marker-alt" style="color: #00bb00"></i>',
@@ -103,18 +103,8 @@ function renderRoute(solution, indictments) {
             }
         }
         marker.bindPopup(getEntityPopoverContent(point, indictmentMap))
-        if(point.prev && points[point.name].isVisited){
-            const next_location = [points[point.prev].lat, points[point.prev].lon];
-            L.polyline([location, next_location], {color: "#00000077"}).addTo(map);
-            // Add dist to prev on line
-            const dist = point.distanceToPrev;
-            const dist_location = [(location[0] + next_location[0])/2, (location[1] + next_location[1])/2];
-            L.marker(dist_location, {
-                icon: L.divIcon({
-                    html: dist + "m",
-                    className: 'dummy'
-                })
-            }).addTo(map);
+        if(point.prev && point.isVisited){
+            L.polyline(point.pathMap[point.prev], {color: "#5577ffcc"}).addTo(map);
         }
     });
 }

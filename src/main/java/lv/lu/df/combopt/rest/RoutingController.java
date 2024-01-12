@@ -6,6 +6,7 @@ import ai.timefold.solver.core.api.score.constraint.Indictment;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverManager;
 import jakarta.annotation.PostConstruct;
+import lv.lu.df.combopt.domain.Location;
 import lv.lu.df.combopt.domain.NavigationSolution;
 import lv.lu.df.combopt.domain.Router;
 import lv.lu.df.combopt.solver.SimpleIndictmentObject;
@@ -13,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -73,7 +72,11 @@ public class RoutingController {
     @PostConstruct
     public void init() {
         NavigationSolution problem = NavigationSolution.generateData(30);
-        ghRouter.setDistanceTimeMap(problem.getPointList());
+
+        List<Location> pl = new ArrayList<>();
+        Collections.addAll(pl, problem.getPointList().toArray(Location[]::new));
+        Collections.addAll(pl, problem.getStart());
+        ghRouter.setDistanceTimeMap(pl);
 
         solverManager.solveAndListen(
                 problem.getSolutionId(),

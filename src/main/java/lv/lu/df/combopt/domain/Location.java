@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.graphhopper.ResponsePath;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +34,10 @@ public class Location {
     private Double alt;
 
     private Integer value = 0;
+    private Boolean isVisited = false;
     private Integer timeToComplete = 0;
     private Integer distanceSinceStart = 0;
+    private Integer timeSinceStart = 0;
 
     private String name;
 
@@ -42,24 +45,17 @@ public class Location {
     private NavigationSolution navigationSolution;
 
     public Location(Double lat, Double lon, Double alt) {
-        this.lat = lat;
-        this.lon = lon;
+        Double[] ll = Router.getDefaultRouterInstance().getClosestPointOnGraph(new Double[]{lat, lon});
+        this.lat = ll[0];
+        this.lon = ll[1];
         this.alt = alt;
-    }
-
-    public TaskLocation getNext(List<Location> locations) {
-        for (Location l : locations) {
-            if(l instanceof TaskLocation tl && tl.getPrev() == this) {
-                return tl;
-            }
-        }
-        return null;
     }
 
     @JsonIgnore
     private Map<Location, Integer> distanceMap = new HashMap<>();
     @JsonIgnore
     private Map<Location, Integer> timeMap = new HashMap<>();
+    private Map<Location, List<List<Double>>> pathMap = new HashMap<>();
 
     public Integer timeTo(Location location) {
         Integer time = this.timeMap.get(location);
@@ -98,7 +94,7 @@ public class Location {
                 + Math.cos(Math.toRadians(this.lat)) * Math.cos(Math.toRadians(location.lat))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        double distance = R * c * 1000; // convert mto meters
 
         double height = this.alt - location.alt;
 

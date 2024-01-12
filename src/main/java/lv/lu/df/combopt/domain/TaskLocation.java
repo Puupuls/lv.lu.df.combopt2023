@@ -5,6 +5,7 @@ import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.domain.variable.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,21 +39,21 @@ public class TaskLocation extends Location{
     private Integer distanceSinceStart = 0;
 
     @PiggybackShadowVariable(shadowVariableName = "distanceSinceStart")
+    private Integer timeSinceStart = 0;
+
+    @PiggybackShadowVariable(shadowVariableName = "distanceSinceStart")
     private Integer distanceToPrev = 0;
 
     @PiggybackShadowVariable(shadowVariableName = "distanceSinceStart")
     private Boolean isVisited = false;
 
     @ValueRangeProvider(id = "booleanRange")
+    @JsonIgnore
     public Boolean[] getBooleanRange() {
         return new Boolean[]{true, false};
     }
 
     public TaskLocation(Double lat, Double lon, Double alt) {
         super(lat, lon, alt);
-    }
-
-    public String toString() {
-        return this.getName() + "(" + this.getIsVisited() + " " + this.getDistanceSinceStart() + " " + this.getValue() + ")";// --> " + this.getPrev();
     }
 }
