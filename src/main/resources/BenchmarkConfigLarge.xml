@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plannerBenchmark xmlns="https://timefold.ai/xsd/benchmark" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="https://timefold.ai/xsd/benchmark https://timefold.ai/xsd/benchmark/benchmark.xsd">
+    <benchmarkDirectory>local/benchmarkReport</benchmarkDirectory>
+    <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+    <warmUpSecondsSpentLimit>0</warmUpSecondsSpentLimit>
+
+    <inheritedSolverBenchmark>
+        <solver>
+            <environmentMode>REPRODUCIBLE</environmentMode>
+            <!-- Define the model -->
+            <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
+            <entityClass>lv.lu.df.combopt.domain.Location</entityClass>
+            <entityClass>lv.lu.df.combopt.domain.TaskLocation</entityClass>
+
+            <!-- Define the score function -->
+            <scoreDirectorFactory>
+                <constraintProviderClass>lv.lu.df.combopt.solver.StreamCalculator</constraintProviderClass>
+            </scoreDirectorFactory>
+
+            <!-- Configure the optimization algorithms (optional) -->
+            <termination>
+                <secondsSpentLimit>60</secondsSpentLimit>
+            </termination>
+
+            <constructionHeuristic />
+        </solver>
+        <problemBenchmarks>
+            <solutionFileIOClass>lv.lu.df.combopt.domain.NavigationSolutionJsonIO</solutionFileIOClass>
+            <writeOutputSolutionEnabled>true</writeOutputSolutionEnabled>
+            <inputSolutionFile>data/ex10.json</inputSolutionFile>
+            <inputSolutionFile>data/ex25.json</inputSolutionFile>
+            <inputSolutionFile>data/ex50.json</inputSolutionFile>
+            <inputSolutionFile>data/ex75.json</inputSolutionFile>
+        </problemBenchmarks>
+        <subSingleCount>5</subSingleCount>
+    </inheritedSolverBenchmark>
+
+    <solverBenchmarkBluePrint>
+        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE</solverBenchmarkBluePrintType>
+    </solverBenchmarkBluePrint>
+
+</plannerBenchmark>

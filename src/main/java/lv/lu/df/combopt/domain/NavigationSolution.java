@@ -3,8 +3,10 @@ package lv.lu.df.combopt.domain;
 import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +21,11 @@ import java.util.Random;
 
 @PlanningSolution
 @Getter @Setter @NoArgsConstructor
+@JsonIdentityInfo(scope = NavigationSolution.class,
+        property = "solutionId",
+        generator = ObjectIdGenerators.PropertyGenerator.class)
 public class NavigationSolution {
+    public static final Double SPEED = 5d; // km/h
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NavigationSolution.class);
 
@@ -58,17 +64,7 @@ public class NavigationSolution {
     private static int problemId = 0;
     private static Integer getProblemId() { problemId++; return problemId;}
 
-    private Integer distanceCost = 1;
-    private Integer altitudeCost = 5;
-    private Double speed = 5d; // km/h
-
-    public Integer getMinutesToTravel(double distance) {
-        return (int) Math.round(distance/1000 / speed * 60);
-    }
-    public Integer getTotalTimeMinutes(){
-        return this.getMinutesToTravel(this.getTotalDistance());
-    }
-
+    private double totalDistance = 0d;
     public Double getTotalDistance() {
         Double dist = 0d;
         Location p = this.start;
@@ -79,6 +75,7 @@ public class NavigationSolution {
         return dist;
     }
 
+    private Double totalTime = 0d;
     public Double getTotalTime(){
         Double time = 0d;
         Location p = this.start;
@@ -99,12 +96,8 @@ public class NavigationSolution {
         NavigationSolution problem = new NavigationSolution();
         problem.setCreated(LocalDateTime.now());
         problem.setSolutionId(NavigationSolution.getProblemId().toString());
-        problem.maxDuration = pointCount * 10 * 60; // 10 minutes per point
-
-        problem.setDistanceCost(1);
-        problem.setAltitudeCost(10);
-        problem.setSpeed(5d);
-
+//        problem.maxDuration = pointCount * 10 * 60; // 10 minutes per point
+        problem.maxDuration = 5 * 60 * 60; // 5 hours
 
         problem.start = new Start(
                 random.nextDouble() * (UPPER_LEFT_COORD_LAT - LOWER_RIGHT_COORD_LAT) + UPPER_LEFT_COORD_LAT,
@@ -133,7 +126,7 @@ public class NavigationSolution {
                     random.nextDouble() * 25
             );
             p.setName("Point " + i);
-            p.setTimeToComplete(random.nextInt(10) + 1);
+            p.setTimeToComplete(random.nextInt(60) + 10);
             p.setValue(random.nextInt(10)+1);
             p.setNavigationSolution(problem);
             problem.getPointList().add(p);
@@ -146,7 +139,6 @@ public class NavigationSolution {
         LOGGER.info("Solution: " + this.solutionId);
         LOGGER.info("Score: " + this.score);
         LOGGER.info("Max duration: " + this.maxDuration);
-        LOGGER.info("Spent time: " + this.getTotalTimeMinutes());
         LOGGER.info("Total distance: " + this.getTotalDistance());
 
         LOGGER.info("Route: ");

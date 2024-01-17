@@ -9,21 +9,29 @@ import java.io.File;
 
 public class BenchmarkerRunner {
     public static void main(String[] args) {
-        PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory
-                .createFromSolverConfigXmlResource("SolverConfig.xml");
+        createDatasets();
 
         PlannerBenchmarkFactory benchmarkFactoryFromXML = PlannerBenchmarkFactory
                 .createFromXmlResource("BenchmarkConfig.xml");
-
-        //RoutingSolution problem = RoutingSolution.generateData();
-
-        NavigationSolutionJsonIO routingSolutionJsonIO = new NavigationSolutionJsonIO();
-        routingSolutionJsonIO.write(NavigationSolution.generateData(5),
-                new File("data/classExample5.json"));
 
         PlannerBenchmark benchmark = benchmarkFactoryFromXML.buildPlannerBenchmark();
 
         benchmark.benchmarkAndShowReportInBrowser();
 
+    }
+
+    public static void createDatasets() {
+        System.out.println("Creating datasets");
+        NavigationSolution problem = NavigationSolution.generateData(10);
+        new NavigationSolutionJsonIO().write(problem, new File("data/ex10.json"));
+        problem = NavigationSolution.generateData(25);
+        new NavigationSolutionJsonIO().write(problem, new File("data/ex25.json"));
+        problem = NavigationSolution.generateData(50);
+        new NavigationSolutionJsonIO().write(problem, new File("data/ex50.json"));
+        problem = NavigationSolution.generateData(75);
+        new NavigationSolutionJsonIO().write(problem, new File("data/ex75.json"));
+        problem = NavigationSolution.generateData(100);
+        new NavigationSolutionJsonIO().write(problem, new File("data/ex100.json"));
+        System.out.println("Datasets created");
     }
 }

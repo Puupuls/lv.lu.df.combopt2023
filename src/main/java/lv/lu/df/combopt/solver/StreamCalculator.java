@@ -38,7 +38,7 @@ public class StreamCalculator implements ConstraintProvider {
         return constraintFactory
                 .forEach(TaskLocation.class)
                 .filter(v -> !v.getIsVisited())
-                .penalize(HardMediumSoftScore.ONE_MEDIUM, v -> v.getValue() + 1)
+                .penalize(HardMediumSoftScore.ONE_MEDIUM, Location::getValue)
                 .asConstraint("missedPoints");
     }
 
@@ -55,7 +55,7 @@ public class StreamCalculator implements ConstraintProvider {
                 .forEach(TaskLocation.class)
                 .filter(TaskLocation::getIsVisited)
                 .penalize(HardMediumSoftScore.ONE_SOFT, Location::getTimeToComplete)
-                .asConstraint("shortestPath");
+                .asConstraint("taskCompletionTime");
     }
 
 }

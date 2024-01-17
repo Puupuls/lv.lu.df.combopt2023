@@ -3,6 +3,7 @@
         xsi:schemaLocation="https://timefold.ai/xsd/solver https://timefold.ai/xsd/solver/solver.xsd">
     <environmentMode>REPRODUCIBLE</environmentMode>
 <!--    <environmentMode>FAST_ASSERT</environmentMode>-->
+
     <!-- Define the model -->
     <solutionClass>lv.lu.df.combopt.domain.NavigationSolution</solutionClass>
     <entityClass>lv.lu.df.combopt.domain.Location</entityClass>
@@ -19,34 +20,21 @@
     </termination>
 
     <constructionHeuristic>
-        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
     </constructionHeuristic>
 
     <localSearch>
         <unionMoveSelector>
             <changeMoveSelector />
             <swapMoveSelector />
-            <subChainChangeMoveSelector>
-                <subChainSelector>
-                    <minimumSubChainSize>2</minimumSubChainSize>
-                </subChainSelector>
-
-            </subChainChangeMoveSelector>
-            <subChainSwapMoveSelector>
-                <subChainSelector>
-                    <minimumSubChainSize>2</minimumSubChainSize>
-                </subChainSelector>
-                <secondarySubChainSelector>
-                    <minimumSubChainSize>2</minimumSubChainSize>
-                </secondarySubChainSelector>
-            </subChainSwapMoveSelector>
+            <subChainChangeMoveSelector/>
+            <subChainSwapMoveSelector/>
         </unionMoveSelector>
         <acceptor>
-            <entityTabuRatio>0.25</entityTabuRatio>
+            <lateAcceptanceSize>400</lateAcceptanceSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>1000</acceptedCountLimit>
-            <breakTieRandomly>true</breakTieRandomly>
+            <acceptedCountLimit>10</acceptedCountLimit>
         </forager>
     </localSearch>
 </solver>

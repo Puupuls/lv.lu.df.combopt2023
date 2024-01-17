@@ -82,6 +82,8 @@ function renderRoute(solution, indictments) {
                 <br/>
                 <b>Points visited:</b> <br/> ${visited_points.length} / ${solution.pointList.length}
                 <br/>
+                <b>Point value collected:</b> <br/> ${visited_points.reduce((a, b) => a + b.value, 0)} / ${solution.pointList.reduce((a, b) => a + b.value, 0)}
+                <br/>
             </p>
         `
     );
@@ -120,14 +122,17 @@ function renderRoute(solution, indictments) {
         }
         marker.bindPopup(getEntityPopoverContent(point, indictmentMap))
         if(point.prev && point.isVisited){
-            L.polyline(point.pathMap[point.prev], {color: "#5577ffcc"}).addTo(map);
+            L.polyline(point.pathMap[point.prev], {color: "#5577ffcc", weight: 5}).addTo(map).bindPopup(
+                `<b>${points[point.prev].name}-${point.name}</b><br/>Distance: ${point.distanceToPrev/1000}km <br/>`
+            )
         }
     });
 }
 
 function getEntityPopoverContent(point, indictmentMap) {
-    var popover_content = `<b>${point.name}</b> <br/>
+    var popover_content = `<b>${point.name}</b> ${point.isVisited? "Visited": "Not-Visited"} <br/>
     Value: ${point.value}<br/>
+    Time to complete: ${point.timeToComplete}<br/>
     Time since start: ${formatTime(point.timeSinceStart)}<br/>
     Distance from previous: ${point.distanceToPrev/1000}km<br/>
     <hr/>`;

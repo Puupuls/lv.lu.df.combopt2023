@@ -2,28 +2,27 @@ package lv.lu.df.combopt.domain;
 
 import ai.timefold.solver.core.api.domain.entity.PlanningEntity;
 import ai.timefold.solver.core.api.domain.variable.InverseRelationShadowVariable;
-import ai.timefold.solver.core.api.domain.variable.ShadowVariable;
-import ai.timefold.solver.core.impl.domain.variable.nextprev.PreviousElementVariableListener;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.graphhopper.ResponsePath;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lv.lu.df.combopt.solver.PrevElemChangeListener;
+import lv.lu.df.combopt.solver.LocationDifficultyComparator;
+import lv.lu.df.combopt.solver.LocationStrengthComparator;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
-@PlanningEntity
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIdentityInfo(scope = Location.class,
         property = "name",
         generator = ObjectIdGenerators.PropertyGenerator.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@PlanningEntity(
+        difficultyComparatorClass = LocationDifficultyComparator.class
+)
 public class Location {
     @InverseRelationShadowVariable(sourceVariableName = "prev")
     @JsonIdentityReference(alwaysAsId = true)
@@ -41,7 +40,7 @@ public class Location {
 
     private String name;
 
-    @JsonIgnore
+    @JsonIdentityReference(alwaysAsId = true)
     private NavigationSolution navigationSolution;
 
     public Location(Double lat, Double lon, Double alt) {
@@ -52,27 +51,52 @@ public class Location {
     }
 
     @JsonIgnore
-    private Map<Location, Integer> distanceMap = new HashMap<>();
+    private Map<String, Integer> distanceMap = new HashMap<>();
     @JsonIgnore
-    private Map<Location, Integer> timeMap = new HashMap<>();
-    private Map<Location, List<List<Double>>> pathMap = new HashMap<>();
+    private Map<String, Integer> timeMap = new HashMap<>();
+    private Map<String, List<List<Double>>> pathMap = new HashMap<>();
 
     public Integer timeTo(Location location) {
-        Integer time = this.timeMap.get(location);
+        Integer time = this.timeMap.get(location.name);
         if (time == null) {
-            time = (int) (this.distanceTo(location) / 1000 / this.navigationSolution.getSpeed() * 3600);
-            this.timeMap.put(location, time);
+            time = (int) (this.distanceTo(location) / 1000 / NavigationSolution.SPEED * 3600);
+            this.timeMap.put(location.name, time);
         }
         return time;
     }
 
     public Integer distanceTo(Location location) {
-        Integer distance = this.distanceMap.get(location);
+        Integer distance = this.distanceMap.get(location.name);
         if (distance == null) {
-            distance = this.simpleDistanceTo(location);
-            this.distanceMap.put(location, distance);
+//            distance = this.simpleDistanceTo(location);
+            distance = Router.getDefaultRouterInstance().getDistance(this, location);
+            this.distanceMap.put(location.name, distance);
         }
         return distance;
+    }
+    private Double difficulty = null;
+    public Double getDifficulty(){
+        if (this.difficulty != null)
+            return this.difficulty;
+        // Average distance to 10 closest points from distanceMap
+        AtomicReference<Double> avgDistance = new AtomicReference<>(0d);
+        HashMap<String, Integer> sortedDistanceMap = new HashMap<>(this.distanceMap);
+        sortedDistanceMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .limit(10)
+                .forEachOrdered(x -> avgDistance.updateAndGet(v -> v + x.getValue()));
+        avgDistance.updateAndGet(v -> v / 10);
+
+        Double difficulty = avgDistance.get();
+
+        // Average distance from all points
+        AtomicReference<Double> avgDistanceFromAll = new AtomicReference<>(0d);
+        this.distanceMap.entrySet().stream()
+                .forEachOrdered(x -> avgDistanceFromAll.updateAndGet(v -> v + x.getValue()));
+        avgDistanceFromAll.updateAndGet(v -> v / this.distanceMap.size());
+
+
+        return difficulty;
     }
 
     /**

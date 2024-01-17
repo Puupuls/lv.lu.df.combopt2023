@@ -8,11 +8,13 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import jakarta.annotation.PostConstruct;
 import lv.lu.df.combopt.domain.Location;
 import lv.lu.df.combopt.domain.NavigationSolution;
+import lv.lu.df.combopt.domain.NavigationSolutionJsonIO;
 import lv.lu.df.combopt.domain.Router;
 import lv.lu.df.combopt.solver.SimpleIndictmentObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,21 +73,25 @@ public class RoutingController {
 
     @PostConstruct
     public void init() {
-        NavigationSolution problem = NavigationSolution.generateData(30);
+        NavigationSolution[] problems = new NavigationSolution[4];
+        for (int i = 0; i < problems.length; i++) {
+            problems[i] = NavigationSolution.generateData((i+1) * 25);
+            problems[i].setSolutionId("" + (i+1)*25);
+            List<Location> pl = new ArrayList<>();
+            Collections.addAll(pl, problems[i].getPointList().toArray(Location[]::new));
+            Collections.addAll(pl, problems[i].getStart());
+            ghRouter.setDistanceTimeMap(pl);
 
-        List<Location> pl = new ArrayList<>();
-        Collections.addAll(pl, problem.getPointList().toArray(Location[]::new));
-        Collections.addAll(pl, problem.getStart());
-        ghRouter.setDistanceTimeMap(pl);
-
-        solverManager.solveAndListen(
-                problem.getSolutionId(),
-                id -> problem,
-                solution -> {
-                    solution.setLastSolutionTime(LocalDateTime.now());
-                    solutionMap.put(solution.getSolutionId(), solution);
-                }
-        );
+            int finalI = i;
+            solverManager.solveAndListen(
+                    problems[i].getSolutionId(),
+                    id -> problems[finalI],
+                    solution -> {
+                        solution.setLastSolutionTime(LocalDateTime.now());
+                        solutionMap.put(solution.getSolutionId(), solution);
+                    }
+            );
+        }
     }
 
 }

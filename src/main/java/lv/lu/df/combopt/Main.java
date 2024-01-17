@@ -14,11 +14,12 @@ import lv.lu.df.combopt.solver.StreamCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
-
         NavigationSolution problem = NavigationSolution.generateData(10);
 
         SolverFactory<NavigationSolution> solverFactoryFromXML = SolverFactory.createFromXmlResource("SolverConfig.xml");

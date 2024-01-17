@@ -48,6 +48,27 @@ public class Router {
         return new Double[]{path.getWaypoints().getLat(0), path.getWaypoints().getLon(0)};
     }
 
+    public Integer getDistance(Location from, Location to){
+        GHRequest req = new GHRequest(
+                new GHPoint(from.getLat(), from.getLon()),
+                new GHPoint(to.getLat(), to.getLon())
+        ).
+                setProfile("profile").
+                setLocale(Locale.US);
+        GHResponse rsp = router.route(req);
+        if (rsp.hasErrors())
+            throw new RuntimeException(rsp.getErrors().toString());
+        ResponsePath path = rsp.getBest();
+        from.getDistanceMap().put(to.getName(), (int)Math.round(path.getDistance()));
+        List<List<Double>> pth = new ArrayList<>();
+        for (int i = 0; i < path.getPoints().size(); i++) {
+            pth.add(List.of(path.getPoints().getLat(i), path.getPoints().getLon(i), path.getPoints().getEle(i)));
+        }
+        from.getPathMap().put(to.getName(), pth);
+        from.getTimeMap().put(to.getName(), Math.toIntExact(path.getTime() / 1000));
+        return (int)Math.round(path.getDistance());
+    }
+
     public void setDistanceTimeMap(List<Location> locationList) {
         for (Location location: locationList) {
             for (Location toLocation: locationList) {
@@ -62,11 +83,11 @@ public class Router {
                 for (int i = 0; i < path.getPoints().size(); i++) {
                     pth.add(List.of(path.getPoints().getLat(i), path.getPoints().getLon(i), path.getPoints().getEle(i)));
                 }
-                location.getPathMap().put(toLocation, pth);
+                location.getPathMap().put(toLocation.getName(), pth);
 
                 // distance in meters and time in millis in the response path
-                location.getDistanceMap().put(toLocation, (int)Math.round(path.getDistance()));
-                location.getTimeMap().put(toLocation,Math.toIntExact(path.getTime() / 1000));
+                location.getDistanceMap().put(toLocation.getName(), (int)Math.round(path.getDistance()));
+                location.getTimeMap().put(toLocation.getName(), Math.toIntExact(path.getTime() / 1000));
             }
         }
     }
