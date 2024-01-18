@@ -133,8 +133,8 @@ function getEntityPopoverContent(point, indictmentMap) {
     var popover_content = `<b>${point.name}</b> ${point.isVisited? "Visited": "Not-Visited"} <br/>
     Value: ${point.value}<br/>
     Time to complete: ${point.timeToComplete}<br/>
-    Time since start: ${formatTime(point.timeSinceStart)}<br/>
-    Distance from previous: ${point.distanceToPrev/1000}km<br/>
+    Time since start: ${point.isVisited? formatTime(point.timeSinceStart) : "-"}<br/>
+    Distance from previous: ${point.isVisited? point.distanceToPrev/1000 : "- "}km<br/>
     <hr/>`;
     const indictment = indictmentMap[point.name];
     if (indictment != null) {

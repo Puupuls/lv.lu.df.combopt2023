@@ -92,7 +92,10 @@ public class NavigationSolution {
     }
 
     public static NavigationSolution generateData(int pointCount) {
-        Random random = new Random(19026);
+        return generateData(pointCount, 19026);
+    }
+    public static NavigationSolution generateData(int pointCount, int seed) {
+        Random random = new Random(seed);
         NavigationSolution problem = new NavigationSolution();
         problem.setCreated(LocalDateTime.now());
         problem.setSolutionId(NavigationSolution.getProblemId().toString());

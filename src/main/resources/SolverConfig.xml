@@ -16,7 +16,7 @@
 
     <!-- Configure the optimization algorithms (optional) -->
     <termination>
-        <secondsSpentLimit>180</secondsSpentLimit>
+        <secondsSpentLimit>600</secondsSpentLimit>
     </termination>
 
     <constructionHeuristic>
@@ -31,10 +31,11 @@
             <subChainSwapMoveSelector/>
         </unionMoveSelector>
         <acceptor>
-            <lateAcceptanceSize>400</lateAcceptanceSize>
+            <valueTabuSize>10</valueTabuSize>
+            <lateAcceptanceSize>2000</lateAcceptanceSize>
         </acceptor>
         <forager>
-            <acceptedCountLimit>10</acceptedCountLimit>
+            <acceptedCountLimit>1</acceptedCountLimit>
         </forager>
     </localSearch>
 </solver>

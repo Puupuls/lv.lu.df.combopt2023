@@ -11,7 +11,6 @@ public class StreamCalculator implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 overspentTime(constraintFactory),
-                endIsIncluded(constraintFactory),
                 missedPoints(constraintFactory),
                 distanceToPrev(constraintFactory),
                 taskCompletionTime(constraintFactory)
@@ -25,15 +24,6 @@ public class StreamCalculator implements ConstraintProvider {
                 .penalize(HardMediumSoftScore.ONE_HARD, v -> Math.max(v.getTimeSinceStart() + v.getTimeToComplete() - v.getNavigationSolution().getMaxDuration(), 0))
                 .asConstraint("overspentTime");
     }
-
-    public Constraint endIsIncluded(ConstraintFactory constraintFactory) {
-        return constraintFactory
-                .forEach(TaskLocation.class)
-                .filter(v -> v.getName().equals("End"))
-                .penalize(HardMediumSoftScore.ONE_HARD, v -> v.getIsVisited() ? 0 : 1)
-                .asConstraint("endIsIncluded");
-    }
-
     public Constraint missedPoints(ConstraintFactory constraintFactory) {
         return constraintFactory
                 .forEach(TaskLocation.class)

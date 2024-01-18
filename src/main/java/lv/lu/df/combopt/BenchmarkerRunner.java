@@ -12,7 +12,7 @@ public class BenchmarkerRunner {
         createDatasets();
 
         PlannerBenchmarkFactory benchmarkFactoryFromXML = PlannerBenchmarkFactory
-                .createFromXmlResource("BenchmarkConfig.xml");
+                .createFromXmlResource("BenchmarkConfigTabus.xml");
 
         PlannerBenchmark benchmark = benchmarkFactoryFromXML.buildPlannerBenchmark();
 

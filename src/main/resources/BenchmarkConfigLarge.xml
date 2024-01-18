@@ -32,6 +32,7 @@
             <inputSolutionFile>data/ex25.json</inputSolutionFile>
             <inputSolutionFile>data/ex50.json</inputSolutionFile>
             <inputSolutionFile>data/ex75.json</inputSolutionFile>
+            <inputSolutionFile>data/ex100.json</inputSolutionFile>
         </problemBenchmarks>
         <subSingleCount>5</subSingleCount>
     </inheritedSolverBenchmark>

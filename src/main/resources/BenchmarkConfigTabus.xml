@@ -38,65 +38,7 @@
         <subSingleCount>3</subSingleCount>
     </inheritedSolverBenchmark>
     <solverBenchmark>
-        <name>LA 400 1</name>
-        <solver>
-            <localSearch>
-                <unionMoveSelector>
-                    <changeMoveSelector />
-                    <swapMoveSelector />
-                    <subChainChangeMoveSelector/>
-                    <subChainSwapMoveSelector/>
-                </unionMoveSelector>
-                <acceptor>
-                    <lateAcceptanceSize>400</lateAcceptanceSize>
-                </acceptor>
-                <forager>
-                    <acceptedCountLimit>1</acceptedCountLimit>
-                </forager>
-            </localSearch>
-        </solver>
-    </solverBenchmark>
-    <solverBenchmark>
-        <name>LA 1600 1</name>
-        <solver>
-            <localSearch>
-                <unionMoveSelector>
-                    <changeMoveSelector />
-                    <swapMoveSelector />
-                    <subChainChangeMoveSelector/>
-                    <subChainSwapMoveSelector/>
-                </unionMoveSelector>
-                <acceptor>
-                    <lateAcceptanceSize>1600</lateAcceptanceSize>
-                </acceptor>
-                <forager>
-                    <acceptedCountLimit>1</acceptedCountLimit>
-                </forager>
-            </localSearch>
-        </solver>
-    </solverBenchmark>
-    <solverBenchmark>
-        <name>LA 400 1 - tabu</name>
-        <solver>
-            <localSearch>
-                <unionMoveSelector>
-                    <changeMoveSelector />
-                    <swapMoveSelector />
-                    <subChainChangeMoveSelector/>
-                    <subChainSwapMoveSelector/>
-                </unionMoveSelector>
-                <acceptor>
-                    <valueTabuSize>5</valueTabuSize>
-                    <lateAcceptanceSize>400</lateAcceptanceSize>
-                </acceptor>
-                <forager>
-                    <acceptedCountLimit>1</acceptedCountLimit>
-                </forager>
-            </localSearch>
-        </solver>
-    </solverBenchmark>
-    <solverBenchmark>
-        <name>LA 1600 1 - tabu</name>
+        <name>LA 1600 1 - tabu 5</name>
         <solver>
             <localSearch>
                 <unionMoveSelector>
@@ -108,6 +50,106 @@
                 <acceptor>
                     <valueTabuSize>5</valueTabuSize>
                     <lateAcceptanceSize>1600</lateAcceptanceSize>
+                </acceptor>
+                <forager>
+                    <acceptedCountLimit>1</acceptedCountLimit>
+                </forager>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+    <solverBenchmark>
+        <name>LA 1600 1 - tabu 10</name>
+        <solver>
+            <localSearch>
+                <unionMoveSelector>
+                    <changeMoveSelector />
+                    <swapMoveSelector />
+                    <subChainChangeMoveSelector/>
+                    <subChainSwapMoveSelector/>
+                </unionMoveSelector>
+                <acceptor>
+                    <valueTabuSize>10</valueTabuSize>
+                    <lateAcceptanceSize>1600</lateAcceptanceSize>
+                </acceptor>
+                <forager>
+                    <acceptedCountLimit>1</acceptedCountLimit>
+                </forager>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+    <solverBenchmark>
+        <name>LA 1600 1 - tabu 15</name>
+        <solver>
+            <localSearch>
+                <unionMoveSelector>
+                    <changeMoveSelector />
+                    <swapMoveSelector />
+                    <subChainChangeMoveSelector/>
+                    <subChainSwapMoveSelector/>
+                </unionMoveSelector>
+                <acceptor>
+                    <valueTabuSize>15</valueTabuSize>
+                    <lateAcceptanceSize>1600</lateAcceptanceSize>
+                </acceptor>
+                <forager>
+                    <acceptedCountLimit>1</acceptedCountLimit>
+                </forager>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+    <solverBenchmark>
+        <name>LA 2000 1 - tabu 5</name>
+        <solver>
+            <localSearch>
+                <unionMoveSelector>
+                    <changeMoveSelector />
+                    <swapMoveSelector />
+                    <subChainChangeMoveSelector/>
+                    <subChainSwapMoveSelector/>
+                </unionMoveSelector>
+                <acceptor>
+                    <valueTabuSize>5</valueTabuSize>
+                    <lateAcceptanceSize>2000</lateAcceptanceSize>
+                </acceptor>
+                <forager>
+                    <acceptedCountLimit>1</acceptedCountLimit>
+                </forager>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+    <solverBenchmark>
+        <name>LA 2000 1 - tabu 10</name>
+        <solver>
+            <localSearch>
+                <unionMoveSelector>
+                    <changeMoveSelector />
+                    <swapMoveSelector />
+                    <subChainChangeMoveSelector/>
+                    <subChainSwapMoveSelector/>
+                </unionMoveSelector>
+                <acceptor>
+                    <valueTabuSize>10</valueTabuSize>
+                    <lateAcceptanceSize>2000</lateAcceptanceSize>
+                </acceptor>
+                <forager>
+                    <acceptedCountLimit>1</acceptedCountLimit>
+                </forager>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+    <solverBenchmark>
+        <name>LA 2000 1 - tabu 15</name>
+        <solver>
+            <localSearch>
+                <unionMoveSelector>
+                    <changeMoveSelector />
+                    <swapMoveSelector />
+                    <subChainChangeMoveSelector/>
+                    <subChainSwapMoveSelector/>
+                </unionMoveSelector>
+                <acceptor>
+                    <valueTabuSize>15</valueTabuSize>
+                    <lateAcceptanceSize>2000</lateAcceptanceSize>
                 </acceptor>
                 <forager>
                     <acceptedCountLimit>1</acceptedCountLimit>
